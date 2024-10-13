@@ -1,0 +1,22 @@
+{
+  "name": "expense-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NTCL/Expense-Tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NTCL/Expense-Tracker/issues"
+  },
+  "homepage": "https://github.com/NTCL/Expense-Tracker#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
