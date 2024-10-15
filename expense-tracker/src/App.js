@@ -23,12 +23,20 @@ function App() {
         formData.append("amount", amount);
         formData.append("date", date);
         formData.append("type", type);
+        resetDescription();
+        resetAmount();
+        resetDate();
+        resetType();
         fetch("/api", {
             method: "POST",
             body: formData
         })
         .then(result => result.json())
-        .then(data => console.log(data));
+        .then(data => {
+            fetch("/api")
+            .then(result => result.json())
+            .then(data => setEntries(data));
+        });
     }
 
     return (
@@ -45,7 +53,7 @@ function App() {
                     <label>Amount: </label>
                     <input
                         type='number'
-                        step='0.01'
+                        step='0.1'
                         min='0'
                         {... bindAmount}
                     />

@@ -1,29 +1,20 @@
 const express = require("express");
 const bodyParser = require('body-parser');
-const app = express();
+const db = require('./database');
 
-app.get("/api", (req, res) => {
-    const data = [
-        {
-            id: 1,
-            description : "Breakfast at McDonald's",
-            amount: 30.5,
-            date: "1/1/2024",
-            type: "food"
-        },
-        {
-            id: 2,
-            description : "Take a minibus to work",
-            amount: 4.2,
-            date: "1/1/2024",
-            type: "transportation"
-        }
-    ]
+const app = express();
+db.init();
+
+app.get("/api", async (req, res) => {
+    const expense = db.factory('expense');
+    const data = await expense.getEntries();
     res.send(JSON.stringify(data));
 });
 
-app.post("/api", bodyParser.urlencoded(), (req, res) => {
-    res.send(req.body);
+app.post("/api", bodyParser.urlencoded(), async (req, res) => {
+    const expense = db.factory('expense');
+    const ret = await expense.addEntry(req.body);
+    res.send(ret);
 });
 
 const PORT = process.env.PORT || 8080;
