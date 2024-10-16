@@ -14,7 +14,7 @@ app.get("/api", async (req, res) => {
 app.post("/api", bodyParser.urlencoded(), async (req, res) => {
     const expense = db.factory('expense');
     const ret = await expense.addEntry(req.body);
-    res.send(ret);
+    res.send(JSON.stringify(ret));
 });
 
 const PORT = process.env.PORT || 8080;
