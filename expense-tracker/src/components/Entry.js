@@ -1,4 +1,4 @@
-function Entry({entry}) {
+function Entry({entry, loadEntry}) {
     return (
         <div>
             <div>
@@ -13,6 +13,7 @@ function Entry({entry}) {
             <div>
                 {entry.type}
             </div>
+            <button onClick={() => loadEntry(entry)}>Edit</button>
         </div>
     );
 }

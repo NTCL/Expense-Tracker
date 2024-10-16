@@ -4,10 +4,11 @@ import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 
 function App() {
-    const [description, bindDescription, resetDescription] = useInput('');
-    const [amount, bindAmount, resetAmount] = useInput('');
-    const [date, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
-    const [type, bindType, resetType] = useInput('others');
+    const [description, setDescription, bindDescription, resetDescription] = useInput('');
+    const [amount, setAmount, bindAmount, resetAmount] = useInput('');
+    const [date, setDate, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
+    const [type, setType, bindType, resetType] = useInput('others');
+    const [id, setId] = useState(0);
     const [entries, setEntries] = useState([]);
 
     useEffect(() => {
@@ -19,14 +20,12 @@ function App() {
     const submitHandler = e => {
         e.preventDefault();
         const formData = new URLSearchParams();
+        formData.append("id", id);
         formData.append("description", description);
         formData.append("amount", amount);
         formData.append("date", date);
         formData.append("type", type);
-        resetDescription();
-        resetAmount();
-        resetDate();
-        resetType();
+        resetForm();
         fetch("/api", {
             method: "POST",
             body: formData
@@ -39,9 +38,31 @@ function App() {
         });
     }
 
+    const loadEntry = (entry) => {
+        resetForm();
+        setId(entry.id);
+        if(entry.id > 0) {
+            setDescription(entry.description);
+            setAmount(entry.amount);
+            setDate(entry.date);
+            setType(entry.type);
+        }
+    };
+
+    const resetForm = () => {
+        resetDescription();
+        resetAmount();
+        resetDate();
+        resetType();
+    }
+
     return (
         <div className="App">
             <form onSubmit={submitHandler}>
+                <div>
+                    <label>ID: </label>
+                    {id}
+                </div>
                 <div>
                     <label>Description: </label>
                     <input
@@ -75,7 +96,8 @@ function App() {
                 </div>
                 <button>Submit</button>
             </form>
-            {entries.map(entry => <Entry key={entry.id} entry={entry} />)}
+            <button onClick={() => loadEntry({id: 0})}>Add</button>
+            {entries.map(entry => <Entry key={entry.id} entry={entry} loadEntry={loadEntry} />)}
         </div>
     );
 }

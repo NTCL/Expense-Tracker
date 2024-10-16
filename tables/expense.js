@@ -10,6 +10,7 @@ class expense {
         try {
             const [ret] = await this.pool.query(`
                 SELECT
+                    id,
                     description,
                     amount,
                     DATE_FORMAT(date, '%Y-%m-%d') AS date,
@@ -37,7 +38,24 @@ class expense {
             return entry;
         }
         catch (err) {
-            console.log(err);
+            return err;
+        }
+    }
+
+    async updateEntry(entry, id) {
+        try {
+            await this.pool.query(`
+                UPDATE
+                    expense
+                SET
+                    ?
+                WHERE
+                    id = ?
+            `, [entry, id]);
+    
+            return entry;
+        }
+        catch (err) {
             return err;
         }
     }

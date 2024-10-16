@@ -12,8 +12,20 @@ app.get("/api", async (req, res) => {
 });
 
 app.post("/api", bodyParser.urlencoded(), async (req, res) => {
+    const entry = req.body;
+    const entryId = entry.id;
+    delete entry.id;
     const expense = db.factory('expense');
-    const ret = await expense.addEntry(req.body);
+    let ret = '';
+
+    // add expense
+    if(entryId == 0) {
+        ret = await expense.addEntry(entry);
+    }
+    // update expense
+    else {
+        ret = await expense.updateEntry(entry, entryId);
+    }
     res.send(JSON.stringify(ret));
 });
 
