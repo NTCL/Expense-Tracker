@@ -19,11 +19,10 @@ const getEntries = async () => {
             FROM
                 expense
         `);
-        console.log(ret);
         return ret;
     }
     catch (err) {
-        console.log(err);
+        return err;
     }
 }
 

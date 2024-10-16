@@ -21,11 +21,11 @@ const init = () => {
     });
 
     con.query(`
-        CREATE TABLE IF NOT EXISTS expenses (
+        CREATE TABLE IF NOT EXISTS expense (
             id INT(11) NOT NULL AUTO_INCREMENT,
             description VARCHAR(255) NOT NULL DEFAULT '',
             amount DECIMAL(11,1) NOT NULL DEFAULT 0.0,
-            date DATE NOT NULL DEFAULT '1000-01-01',
+            date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             type VARCHAR(255) NOT NULL DEFAULT 'Others',
             PRIMARY KEY (id)
         )
