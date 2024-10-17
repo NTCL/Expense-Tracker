@@ -10,6 +10,7 @@ function App() {
     const [type, setType, bindType, resetType] = useInput('others');
     const [id, setId] = useState(0);
     const [entries, setEntries] = useState([]);
+    const [sum, setSum] = useState(0);
 
     useEffect(() => {
         fetch("/api")
@@ -21,6 +22,10 @@ function App() {
             // need error handling
         });
     }, []);
+
+    useEffect(() => {
+        setSum(entries.reduce((total, entry) => total + parseFloat(entry.amount), 0));
+    }, [entries]);
 
     const submitHandler = e => {
         e.preventDefault();
@@ -130,6 +135,10 @@ function App() {
                 </div>
                 <button>Submit</button>
             </form>
+            <div>
+                <label>Sum: </label>
+                {sum}
+            </div>
             <button onClick={() => loadEntry({id: 0})}>Add</button>
             {entries.map(entry => <Entry key={entry.id} entry={entry} loadEntry={loadEntry} deleteEntry={deleteEntry}/>)}
         </div>
