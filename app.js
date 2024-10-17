@@ -7,7 +7,7 @@ db.init();
 
 app.get("/api", async (req, res) => {
     const expense = db.factory('expense');
-    const queryRes = await expense.getEntries();
+    const queryRes = await expense.getEntries(req.query);
 
     const ret = {
         success : true

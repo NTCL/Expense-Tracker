@@ -11,9 +11,20 @@ function App() {
     const [id, setId] = useState(0);
     const [entries, setEntries] = useState([]);
     const [sum, setSum] = useState(0);
+    const [typeFilter, setTypeFilter, bindTypeFilter, resetTypeFilter] = useInput('all');
 
     useEffect(() => {
-        fetch("/api")
+        let url = "/api";
+
+        let filters = {};
+
+        if(typeFilter != 'all') {
+            filters.type = typeFilter;
+        }
+
+        url += "?" + new URLSearchParams(filters);
+
+        fetch(url)
         .then(result => result.json())
         .then(json => {
             if(typeof(json.error) == 'undefined') {
@@ -21,7 +32,7 @@ function App() {
             }
             // need error handling
         });
-    }, []);
+    }, [typeFilter]);
 
     useEffect(() => {
         setSum(entries.reduce((total, entry) => total + parseFloat(entry.amount), 0));
@@ -140,6 +151,17 @@ function App() {
                 {sum}
             </div>
             <button onClick={() => loadEntry({id: 0})}>Add</button>
+            <div>Filter</div>
+            <div>
+                <label>Type: </label>
+                <select {... bindTypeFilter}>
+                    <option value="all">All</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="food">Food</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+            <div>Entries</div>
             {entries.map(entry => <Entry key={entry.id} entry={entry} loadEntry={loadEntry} deleteEntry={deleteEntry}/>)}
         </div>
     );

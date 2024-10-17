@@ -8,20 +8,29 @@ class expense {
 
     /**
      * Get all entries
+     * @param {object} filters query filters
      * @returns {Array|object} Array of entries on success, or error object on failure
      */
-    async getEntries() {
+    async getEntries(filters) {
+        let sql = `
+            SELECT
+                id,
+                description,
+                amount,
+                DATE_FORMAT(date, '%Y-%m-%d') AS date,
+                type
+            FROM
+                expense
+        `;
+        let values = [];
+        
+        if(typeof(filters.type) != 'undefined') {
+            sql += 'WHERE type = ?';
+            values.push(filters.type);
+        }
+
         try {
-            const [ret] = await this.pool.query(`
-                SELECT
-                    id,
-                    description,
-                    amount,
-                    DATE_FORMAT(date, '%Y-%m-%d') AS date,
-                    type
-                FROM
-                    expense
-            `);
+            const [ret] = await this.pool.query(sql, values);
             return ret;
         }
         catch (err) {
