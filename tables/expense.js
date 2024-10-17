@@ -6,6 +6,10 @@ class expense {
         this.pool = pool;
     }
 
+    /**
+     * Get all entries
+     * @returns {Array|object} Array of entries on success, or error object on failure
+     */
     async getEntries() {
         try {
             const [ret] = await this.pool.query(`
@@ -25,6 +29,11 @@ class expense {
         }
     }
 
+    /**
+     * Add an entry
+     * @param {object} entry expense object
+     * @returns {boolean|object} true on success, or error object on failure
+     */
     async addEntry(entry) {
         try {
             await this.pool.query(`
@@ -34,14 +43,20 @@ class expense {
                     ?
             `, entry);
     
-            return entry;
+            return true;
         }
         catch (err) {
             return err;
         }
     }
 
-    async updateEntry(entry, id) {
+    /**
+     * Update an entry
+     * @param {number} id id of expense entry to be updated
+     * @param {object} entry expense object
+     * @returns {boolean|object} true on success, or error object on failure
+     */
+    async updateEntry(id, entry) {
         try {
             await this.pool.query(`
                 UPDATE
@@ -52,13 +67,18 @@ class expense {
                     id = ?
             `, [entry, id]);
     
-            return entry;
+            return true;
         }
         catch (err) {
             return err;
         }
     }
 
+    /**
+     * Delete an entry
+     * @param {number} id id of expense entry to be deleted
+     * @returns {boolean|object} true on success, or error object on failure
+     */
     async deleteEntry(id) {
         try {
             await this.pool.query(`
@@ -68,7 +88,7 @@ class expense {
                     id = ?
             `, [id]);
     
-            return "DELETED";
+            return true;
         }
         catch (err) {
             return err;

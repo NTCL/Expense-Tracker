@@ -7,8 +7,21 @@ db.init();
 
 app.get("/api", async (req, res) => {
     const expense = db.factory('expense');
-    const data = await expense.getEntries();
-    res.send(JSON.stringify(data));
+    const queryRes = await expense.getEntries();
+
+    const ret = {
+        success : true
+    };
+
+    if(queryRes instanceof Error) {
+        ret.success = false;
+        ret.error = queryRes;
+    }
+    else {
+        ret.data = queryRes;
+    }
+
+    res.json(ret);
 });
 
 app.post("/api", bodyParser.urlencoded(), async (req, res) => {
@@ -23,21 +36,31 @@ app.post("/api", bodyParser.urlencoded(), async (req, res) => {
     }
 
     const expense = db.factory('expense');
-    let ret = '';
 
-    // delete expense
-    if(isDelete) {
-        ret = await expense.deleteEntry(entryId);
+    const ret = {
+        success : true
+    };
+    let queryRes;
+
+    // add an expense
+    if(entryId == 0) {
+        queryRes = await expense.addEntry(entry);
     }
-    // add expense
-    else if(entryId == 0) {
-        ret = await expense.addEntry(entry);
+    // delete an expense
+    else if(isDelete) {
+        queryRes = await expense.deleteEntry(entryId);
     }
-    // update expense
+    // update an expense
     else {
-        ret = await expense.updateEntry(entry, entryId);
+        queryRes = await expense.updateEntry(entryId, entry);
     }
-    res.send(JSON.stringify(ret));
+
+    if(queryRes instanceof Error) {
+        ret.success = false;
+        ret.error = queryRes;
+    }
+
+    res.json(ret);
 });
 
 const PORT = process.env.PORT || 8080;

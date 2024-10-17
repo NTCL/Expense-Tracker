@@ -14,7 +14,12 @@ function App() {
     useEffect(() => {
         fetch("/api")
         .then(result => result.json())
-        .then(data => setEntries(data));
+        .then(json => {
+            if(typeof(json.error) == 'undefined') {
+                setEntries(json.data);
+            }
+            // need error handling
+        });
     }, []);
 
     const submitHandler = e => {
@@ -31,10 +36,17 @@ function App() {
             body: formData
         })
         .then(result => result.json())
-        .then(data => {
-            fetch("/api")
-            .then(result => result.json())
-            .then(data => setEntries(data));
+        .then(json => {
+            if(typeof(json.error) == 'undefined') {
+                fetch("/api")
+                .then(result => result.json())
+                .then(json => {
+                    if(typeof(json.error) == 'undefined') {
+                        setEntries(json.data);
+                    }
+                    // need error handling
+                });
+            }
         });
     }
 
@@ -57,10 +69,17 @@ function App() {
             method: "POST",
             body: formData
         })
-        .then(result => {
-            fetch("/api")
-            .then(result => result.json())
-            .then(data => setEntries(data));
+        .then(json => {
+            if(typeof(json.error) == 'undefined') {
+                fetch("/api")
+                .then(result => result.json())
+                .then(json => {
+                    if(typeof(json.error) == 'undefined') {
+                        setEntries(json.data);
+                    }
+                    // need error handling
+                });
+            }
         });
     }
 
