@@ -49,6 +49,21 @@ function App() {
         }
     };
 
+    const deleteEntry = (entry) => {
+        const formData = new URLSearchParams();
+        formData.append("id", entry.id);
+        formData.append("_delete", 1);
+        fetch("/api", {
+            method: "POST",
+            body: formData
+        })
+        .then(result => {
+            fetch("/api")
+            .then(result => result.json())
+            .then(data => setEntries(data));
+        });
+    }
+
     const resetForm = () => {
         resetDescription();
         resetAmount();
@@ -97,7 +112,7 @@ function App() {
                 <button>Submit</button>
             </form>
             <button onClick={() => loadEntry({id: 0})}>Add</button>
-            {entries.map(entry => <Entry key={entry.id} entry={entry} loadEntry={loadEntry} />)}
+            {entries.map(entry => <Entry key={entry.id} entry={entry} loadEntry={loadEntry} deleteEntry={deleteEntry}/>)}
         </div>
     );
 }

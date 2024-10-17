@@ -15,11 +15,22 @@ app.post("/api", bodyParser.urlencoded(), async (req, res) => {
     const entry = req.body;
     const entryId = entry.id;
     delete entry.id;
+
+    let isDelete = false;
+    if(typeof(entry._delete) != 'undefined' && parseInt(entry._delete)) {
+        isDelete = true;
+        delete entry._delete;
+    }
+
     const expense = db.factory('expense');
     let ret = '';
 
+    // delete expense
+    if(isDelete) {
+        ret = await expense.deleteEntry(entryId);
+    }
     // add expense
-    if(entryId == 0) {
+    else if(entryId == 0) {
         ret = await expense.addEntry(entry);
     }
     // update expense

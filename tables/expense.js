@@ -18,7 +18,6 @@ class expense {
                 FROM
                     expense
             `);
-
             return ret;
         }
         catch (err) {
@@ -54,6 +53,22 @@ class expense {
             `, [entry, id]);
     
             return entry;
+        }
+        catch (err) {
+            return err;
+        }
+    }
+
+    async deleteEntry(id) {
+        try {
+            await this.pool.query(`
+                DELETE FROM
+                    expense
+                WHERE
+                    id = ?
+            `, [id]);
+    
+            return "DELETED";
         }
         catch (err) {
             return err;
