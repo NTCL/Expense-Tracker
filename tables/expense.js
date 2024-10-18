@@ -31,6 +31,20 @@ class expense {
                 value: `%${query._search}%`
             });
         }
+
+        if(typeof(query._date_from) != 'undefined') {
+            filters.push({
+                sql: 'DATE(date) >= ?',
+                value: query._date_from
+            });
+        }
+
+        if(typeof(query._date_to) != 'undefined') {
+            filters.push({
+                sql: 'DATE(date) <= ?',
+                value: query._date_to
+            });
+        }
         
         if(typeof(query.type) != 'undefined') {
             filters.push({

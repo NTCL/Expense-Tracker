@@ -15,10 +15,13 @@ function App() {
     // for summary
     const [sum, setSum] = useState(0);
     // for search filter
-    const [search, setSearch, bindSearch, resetSearch] = useInput('');
     const [searchFilter, setSearchFilter] = useState('');
+    // for 'date form' filter
+    const [dateFromFilter, setDateFromFilter] = useState('');
+    // for 'date to' filter
+    const [dateToFilter, setDateToFilter] = useState('');
     // for type filter
-    const [typeFilter, setTypeFilter, bindTypeFilter, resetTypeFilter] = useInput('all');
+    const [typeFilter, setTypeFilter] = useState('all');
 
     const loadEntries = () => {
         let url = "/api";
@@ -26,6 +29,14 @@ function App() {
 
         if(searchFilter != '') {
             filters._search = searchFilter;
+        }
+
+        if(dateFromFilter != '') {
+            filters._date_from = dateFromFilter;
+        }
+
+        if(dateToFilter != '') {
+            filters._date_to = dateToFilter;
         }
 
         if(typeFilter != 'all') {
@@ -80,16 +91,6 @@ function App() {
         }
     };
 
-    // reload entries when filters change
-    useEffect(() => {
-        loadEntries();
-    }, [searchFilter, typeFilter]);
-
-    // reset sum when entries change
-    useEffect(() => {
-        setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
-    }, [entries]);
-
     const submitHandler = e => {
         e.preventDefault();
         const formData = new URLSearchParams();
@@ -111,6 +112,16 @@ function App() {
             // need error handling
         });
     }
+
+    // load entries in the beginning
+    useEffect(() => {
+        loadEntries();
+    }, []);
+
+    // reset sum when entries change
+    useEffect(() => {
+        setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
+    }, [entries]);
 
     return (
         <div className="App">
@@ -158,16 +169,31 @@ function App() {
             </div>
             <button onClick={() => setForm({id: 0})}>Add</button>
             <div>Filter</div>
+            <button onClick={() => loadEntries()}>Search</button>
             <div>
+                <label>Search: </label>
                 <input
                     type='text'
-                    {... bindSearch}
+                    onChange={e => setSearchFilter(e.target.value)}
                 />
-                <button onClick={() => setSearchFilter(search)}>Search</button>
+            </div>
+            <div>
+                <label>Date From: </label>
+                <input
+                    type='date'
+                    onChange={e => setDateFromFilter(e.target.value)}
+                />
+            </div>
+            <div>
+                <label>Date To: </label>
+                <input
+                    type='date'
+                    onChange={e => setDateToFilter(e.target.value)}
+                />
             </div>
             <div>
                 <label>Type: </label>
-                <select {... bindTypeFilter}>
+                <select onChange={e => setTypeFilter(e.target.value)}>
                     <option value="all">All</option>
                     <option value="transportation">Transportation</option>
                     <option value="food">Food</option>
