@@ -8,10 +8,10 @@ class expense {
 
     /**
      * Get all entries
-     * @param {object} filters query filters
+     * @param {object} query query parameters
      * @returns {Array|object} Array of entries on success, or error object on failure
      */
-    async getEntries(filters) {
+    async getEntries(query) {
         let sql = `
             SELECT
                 id,
@@ -22,11 +22,31 @@ class expense {
             FROM
                 expense
         `;
-        let values = [];
+
+        let filters = [];
+
+        if(typeof(query._search) !='undefined') {
+            filters.push({
+                sql: 'description LIKE ?',
+                value: `%${query._search}%`
+            });
+        }
         
-        if(typeof(filters.type) != 'undefined') {
-            sql += 'WHERE type = ?';
-            values.push(filters.type);
+        if(typeof(query.type) != 'undefined') {
+            filters.push({
+                sql: 'type = ?',
+                value: query.type
+            });
+        }
+
+        let values = [];
+
+        if(filters.length) {
+            sql += ' WHERE ';
+            filters.forEach((filter, index) => {
+                sql += (index ? ' AND ' : ' ') + filter.sql + ' ';
+                values.push(filter.value);
+            });
         }
 
         try {

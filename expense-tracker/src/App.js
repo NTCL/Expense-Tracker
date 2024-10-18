@@ -4,19 +4,30 @@ import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 
 function App() {
+    // for expense entry
     const [description, setDescription, bindDescription, resetDescription] = useInput('');
     const [amount, setAmount, bindAmount, resetAmount] = useInput('');
     const [date, setDate, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
     const [type, setType, bindType, resetType] = useInput('others');
     const [id, setId] = useState(0);
+    // for entries
     const [entries, setEntries] = useState([]);
+    // for summary
     const [sum, setSum] = useState(0);
+    // for search filter
+    const [search, setSearch, bindSearch, resetSearch] = useInput('');
+    const [searchFilter, setSearchFilter] = useState('');
+    // for type filter
     const [typeFilter, setTypeFilter, bindTypeFilter, resetTypeFilter] = useInput('all');
 
     useEffect(() => {
         let url = "/api";
 
         let filters = {};
+
+        if(searchFilter != '') {
+            filters._search = searchFilter;
+        }
 
         if(typeFilter != 'all') {
             filters.type = typeFilter;
@@ -32,7 +43,7 @@ function App() {
             }
             // need error handling
         });
-    }, [typeFilter]);
+    }, [searchFilter, typeFilter]);
 
     useEffect(() => {
         setSum(entries.reduce((total, entry) => total + parseFloat(entry.amount), 0));
@@ -152,6 +163,13 @@ function App() {
             </div>
             <button onClick={() => loadEntry({id: 0})}>Add</button>
             <div>Filter</div>
+            <div>
+                <input
+                    type='text'
+                    {... bindSearch}
+                />
+                <button onClick={() => setSearchFilter(search)}>Search</button>
+            </div>
             <div>
                 <label>Type: </label>
                 <select {... bindTypeFilter}>
