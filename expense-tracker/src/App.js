@@ -46,7 +46,7 @@ function App() {
     }, [searchFilter, typeFilter]);
 
     useEffect(() => {
-        setSum(entries.reduce((total, entry) => total + parseFloat(entry.amount), 0));
+        setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
     }, [entries]);
 
     const submitHandler = e => {
