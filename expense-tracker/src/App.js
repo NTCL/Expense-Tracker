@@ -20,9 +20,8 @@ function App() {
     // for type filter
     const [typeFilter, setTypeFilter, bindTypeFilter, resetTypeFilter] = useInput('all');
 
-    useEffect(() => {
+    const loadEntries = () => {
         let url = "/api";
-
         let filters = {};
 
         if(searchFilter != '') {
@@ -43,8 +42,48 @@ function App() {
             }
             // need error handling
         });
+    };
+
+    const deleteEntry = (entry) => {
+        const formData = new URLSearchParams();
+        formData.append("id", entry.id);
+        formData.append("_delete", 1);
+        fetch("/api", {
+            method: "POST",
+            body: formData
+        })
+        .then(json => {
+            if(typeof(json.error) == 'undefined') {
+                loadEntries();
+            }
+            // need error handling
+        });
+    }
+
+    const resetForm = () => {
+        resetDescription();
+        resetAmount();
+        resetDate();
+        resetType();
+    }
+
+    const setForm = (entry) => {
+        resetForm();
+        setId(entry.id);
+        if(entry.id > 0) {
+            setDescription(entry.description);
+            setAmount(entry.amount);
+            setDate(entry.date);
+            setType(entry.type);
+        }
+    };
+
+    // reload entries when filters change
+    useEffect(() => {
+        loadEntries();
     }, [searchFilter, typeFilter]);
 
+    // reset sum when entries change
     useEffect(() => {
         setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
     }, [entries]);
@@ -65,56 +104,10 @@ function App() {
         .then(result => result.json())
         .then(json => {
             if(typeof(json.error) == 'undefined') {
-                fetch("/api")
-                .then(result => result.json())
-                .then(json => {
-                    if(typeof(json.error) == 'undefined') {
-                        setEntries(json.data);
-                    }
-                    // need error handling
-                });
+                loadEntries();
             }
+            // need error handling
         });
-    }
-
-    const loadEntry = (entry) => {
-        resetForm();
-        setId(entry.id);
-        if(entry.id > 0) {
-            setDescription(entry.description);
-            setAmount(entry.amount);
-            setDate(entry.date);
-            setType(entry.type);
-        }
-    };
-
-    const deleteEntry = (entry) => {
-        const formData = new URLSearchParams();
-        formData.append("id", entry.id);
-        formData.append("_delete", 1);
-        fetch("/api", {
-            method: "POST",
-            body: formData
-        })
-        .then(json => {
-            if(typeof(json.error) == 'undefined') {
-                fetch("/api")
-                .then(result => result.json())
-                .then(json => {
-                    if(typeof(json.error) == 'undefined') {
-                        setEntries(json.data);
-                    }
-                    // need error handling
-                });
-            }
-        });
-    }
-
-    const resetForm = () => {
-        resetDescription();
-        resetAmount();
-        resetDate();
-        resetType();
     }
 
     return (
@@ -161,7 +154,7 @@ function App() {
                 <label>Sum: </label>
                 {sum}
             </div>
-            <button onClick={() => loadEntry({id: 0})}>Add</button>
+            <button onClick={() => setForm({id: 0})}>Add</button>
             <div>Filter</div>
             <div>
                 <input
@@ -180,7 +173,7 @@ function App() {
                 </select>
             </div>
             <div>Entries</div>
-            {entries.map(entry => <Entry key={entry.id} entry={entry} loadEntry={loadEntry} deleteEntry={deleteEntry}/>)}
+            {entries.map(entry => <Entry key={entry.id} entry={entry} setForm={setForm} deleteEntry={deleteEntry}/>)}
         </div>
     );
 }
