@@ -54,6 +54,7 @@ function App() {
         })
         .then(json => {
             if(typeof(json.error) == 'undefined') {
+                resetForm();
                 loadEntries();
             }
             // need error handling
@@ -61,6 +62,7 @@ function App() {
     }
 
     const resetForm = () => {
+        setId(0);
         resetDescription();
         resetAmount();
         resetDate();
