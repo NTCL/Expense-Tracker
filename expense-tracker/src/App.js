@@ -1,7 +1,42 @@
 import "./App.css";
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useReducer} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
+
+const initialFilters = {
+    _search: '',
+    _date_from: '',
+    _date_to: '',
+    type: 'all'
+};
+const filtersReducer = (currentFilters, action) => {
+    switch(action.type) {
+        case "searchChange":
+            return {
+                ...currentFilters,
+                _search: action.value
+            };
+        case "dateFromChange":
+            return {
+                ...currentFilters,
+                _date_from: action.value
+            };
+        case "dateToChange":
+            return {
+                ...currentFilters,
+                _date_to: action.value
+            };
+        case "typeChange":
+            return {
+                ...currentFilters,
+                type: action.value
+            };
+        case 'reset':
+            return initialFilters;
+        default:
+            return currentFilters;
+    }
+}
 
 function App() {
     // for expense entry
@@ -14,38 +49,10 @@ function App() {
     const [entries, setEntries] = useState([]);
     // for summary
     const [sum, setSum] = useState(0);
-    // for search filter
-    const [searchFilter, setSearchFilter] = useState('');
-    // for 'date form' filter
-    const [dateFromFilter, setDateFromFilter] = useState('');
-    // for 'date to' filter
-    const [dateToFilter, setDateToFilter] = useState('');
-    // for type filter
-    const [typeFilter, setTypeFilter] = useState('all');
+    const[filters, filtersDispatch] = useReducer(filtersReducer, initialFilters);
 
     const loadEntries = () => {
-        let url = "/api";
-        let filters = {};
-
-        if(searchFilter != '') {
-            filters._search = searchFilter;
-        }
-
-        if(dateFromFilter != '') {
-            filters._date_from = dateFromFilter;
-        }
-
-        if(dateToFilter != '') {
-            filters._date_to = dateToFilter;
-        }
-
-        if(typeFilter != 'all') {
-            filters.type = typeFilter;
-        }
-
-        url += "?" + new URLSearchParams(filters);
-
-        fetch(url)
+        fetch("/api?" + new URLSearchParams(filters))
         .then(result => result.json())
         .then(json => {
             if(typeof(json.error) == 'undefined') {
@@ -90,13 +97,6 @@ function App() {
             setType(entry.type);
         }
     };
-
-    const resetFilters = () => {
-        setSearchFilter('');
-        setDateFromFilter('');
-        setDateToFilter('');
-        setTypeFilter('all');
-    }
 
     const submitHandler = e => {
         e.preventDefault();
@@ -177,34 +177,37 @@ function App() {
             <button onClick={() => setForm({id: 0})}>Add</button>
             <div>Filter</div>
             <button onClick={() => loadEntries()}>Search</button>
-            <button onClick={() => resetFilters()}>Reset</button>
+            <button onClick={() => filtersDispatch({type: 'reset'})}>Reset</button>
             <div>
                 <label>Search: </label>
                 <input
                     type='text'
-                    value={searchFilter}
-                    onChange={e => setSearchFilter(e.target.value)}
+                    value={filters._search}
+                    onChange={e => filtersDispatch({type: 'searchChange', value: e.target.value})}
                 />
             </div>
             <div>
                 <label>Date From: </label>
                 <input
                     type='date'
-                    value={dateFromFilter}
-                    onChange={e => setDateFromFilter(e.target.value)}
+                    value={filters._date_from}
+                    onChange={e => filtersDispatch({type: 'dateFromChange', value: e.target.value})}
                 />
             </div>
             <div>
                 <label>Date To: </label>
                 <input
                     type='date'
-                    value={dateToFilter}
-                    onChange={e => setDateToFilter(e.target.value)}
+                    value={filters._date_to}
+                    onChange={e => filtersDispatch({type: 'dateToChange', value: e.target.value})}
                 />
             </div>
             <div>
                 <label>Type: </label>
-                <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+                <select 
+                    value={filters.type} 
+                    onChange={e => filtersDispatch({type: 'typeChange', value: e.target.value})}
+                >
                     <option value="all">All</option>
                     <option value="transportation">Transportation</option>
                     <option value="food">Food</option>

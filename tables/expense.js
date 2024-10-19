@@ -25,28 +25,28 @@ class expense {
 
         let filters = [];
 
-        if(typeof(query._search) !='undefined') {
+        if(typeof(query._search) != 'undefined' && query._search != '') {
             filters.push({
                 sql: 'description LIKE ?',
                 value: `%${query._search}%`
             });
         }
 
-        if(typeof(query._date_from) != 'undefined') {
+        if(typeof(query._date_from) != 'undefined' && query._date_from != '') {
             filters.push({
                 sql: 'DATE(date) >= ?',
                 value: query._date_from
             });
         }
 
-        if(typeof(query._date_to) != 'undefined') {
+        if(typeof(query._date_to) != 'undefined' && query._date_to != '') {
             filters.push({
                 sql: 'DATE(date) <= ?',
                 value: query._date_to
             });
         }
         
-        if(typeof(query.type) != 'undefined') {
+        if(typeof(query.type) != 'undefined' && query.type != 'all') {
             filters.push({
                 sql: 'type = ?',
                 value: query.type
