@@ -91,6 +91,13 @@ function App() {
         }
     };
 
+    const resetFilters = () => {
+        setSearchFilter('');
+        setDateFromFilter('');
+        setDateToFilter('');
+        setTypeFilter('all');
+    }
+
     const submitHandler = e => {
         e.preventDefault();
         const formData = new URLSearchParams();
@@ -170,10 +177,12 @@ function App() {
             <button onClick={() => setForm({id: 0})}>Add</button>
             <div>Filter</div>
             <button onClick={() => loadEntries()}>Search</button>
+            <button onClick={() => resetFilters()}>Reset</button>
             <div>
                 <label>Search: </label>
                 <input
                     type='text'
+                    value={searchFilter}
                     onChange={e => setSearchFilter(e.target.value)}
                 />
             </div>
@@ -181,6 +190,7 @@ function App() {
                 <label>Date From: </label>
                 <input
                     type='date'
+                    value={dateFromFilter}
                     onChange={e => setDateFromFilter(e.target.value)}
                 />
             </div>
@@ -188,12 +198,13 @@ function App() {
                 <label>Date To: </label>
                 <input
                     type='date'
+                    value={dateToFilter}
                     onChange={e => setDateToFilter(e.target.value)}
                 />
             </div>
             <div>
                 <label>Type: </label>
-                <select onChange={e => setTypeFilter(e.target.value)}>
+                <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
                     <option value="all">All</option>
                     <option value="transportation">Transportation</option>
                     <option value="food">Food</option>
