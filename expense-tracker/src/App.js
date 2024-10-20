@@ -3,34 +3,21 @@ import {useEffect, useState, useReducer} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 
+const INITIAL_TYPE_FILTER = 'all';
+
 const initialFilters = {
     _search: '',
     _date_from: '',
     _date_to: '',
-    type: 'all'
+    type: INITIAL_TYPE_FILTER
 };
 const filtersReducer = (currentFilters, action) => {
     switch(action.type) {
-        case "searchChange":
+        case "changeFilters":
             return {
                 ...currentFilters,
-                _search: action.value
-            };
-        case "dateFromChange":
-            return {
-                ...currentFilters,
-                _date_from: action.value
-            };
-        case "dateToChange":
-            return {
-                ...currentFilters,
-                _date_to: action.value
-            };
-        case "typeChange":
-            return {
-                ...currentFilters,
-                type: action.value
-            };
+                ...action.value
+            }
         case 'reset':
             return initialFilters;
         default:
@@ -39,45 +26,24 @@ const filtersReducer = (currentFilters, action) => {
 }
 
 function App() {
-    // for expense entry
+    // for expense entry form
     const [description, setDescription, bindDescription, resetDescription] = useInput('');
     const [amount, setAmount, bindAmount, resetAmount] = useInput('');
     const [date, setDate, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
     const [type, setType, bindType, resetType] = useInput('others');
     const [id, setId] = useState(0);
+    // for filters
+    const [filters, filtersDispatch] = useReducer(filtersReducer, initialFilters);
+    const [search, setSearch, bindSearch, resetSearch] = useInput('');
+    const [dateFrom, setDateFrom, bindDateFrom, resetDateFrom] = useInput('');
+    const [dateTo, setDateTo, bindDateTo, resetDateTo] = useInput('');
+    const [typeFilter, setTypeFilter] = useState(INITIAL_TYPE_FILTER);
     // for entries
     const [entries, setEntries] = useState([]);
     // for summary
     const [sum, setSum] = useState(0);
-    const[filters, filtersDispatch] = useReducer(filtersReducer, initialFilters);
 
-    const loadEntries = () => {
-        fetch("/api?" + new URLSearchParams(filters))
-        .then(result => result.json())
-        .then(json => {
-            if(typeof(json.error) == 'undefined') {
-                setEntries(json.data);
-            }
-            // need error handling
-        });
-    };
-
-    const deleteEntry = (entry) => {
-        const formData = new URLSearchParams();
-        formData.append("id", entry.id);
-        formData.append("_delete", 1);
-        fetch("/api", {
-            method: "POST",
-            body: formData
-        })
-        .then(json => {
-            if(typeof(json.error) == 'undefined') {
-                resetForm();
-                loadEntries();
-            }
-            // need error handling
-        });
-    }
+    // for expense entry form
 
     const resetForm = () => {
         setId(0);
@@ -120,10 +86,81 @@ function App() {
         });
     }
 
-    // load entries in the beginning
+    // for filters
+    
+    const typeChangeHandler = e => {
+        setTypeFilter(e.target.value);
+        filtersDispatch({
+            type: 'changeFilters', 
+            value: {
+                _search: search,
+                _date_from: dateFrom,
+                _date_to: dateTo,
+                type: e.target.value
+            }
+        });
+    }
+
+    // change filters
+    const changeFilters = () => {
+        filtersDispatch({
+            type: 'changeFilters', 
+            value: {
+                _search: search,
+                _date_from: dateFrom,
+                _date_to: dateTo,
+                type: typeFilter
+            }
+        });
+    }
+
+    // reset filters
+    const resetFilters = () => {
+        filtersDispatch({type: 'reset'});
+        resetSearch();
+        resetDateFrom();
+        resetDateTo();
+        setTypeFilter(INITIAL_TYPE_FILTER);
+    }
+
+    // for entries
+
+    // load entries
+    const loadEntries = () => {
+        fetch("/api?" + new URLSearchParams(filters))
+        .then(result => result.json())
+        .then(json => {
+            if(typeof(json.error) == 'undefined') {
+                setEntries(json.data);
+            }
+            // need error handling
+        });
+    };
+
+    // delete entry on delete click
+    const deleteEntry = (entry) => {
+        const formData = new URLSearchParams();
+        formData.append("id", entry.id);
+        formData.append("_delete", 1);
+        fetch("/api", {
+            method: "POST",
+            body: formData
+        })
+        .then(json => {
+            if(typeof(json.error) == 'undefined') {
+                resetForm();
+                loadEntries();
+            }
+            // need error handling
+        });
+    }
+
+    // load entries in the beginning and reload on filter change
     useEffect(() => {
         loadEntries();
-    }, []);
+    }, [filters]);
+
+    // for summary
 
     // reset sum when entries change
     useEffect(() => {
@@ -170,49 +207,46 @@ function App() {
                 </div>
                 <button>Submit</button>
             </form>
-            <div>
-                <label>Sum: </label>
-                {sum}
-            </div>
-            <button onClick={() => setForm({id: 0})}>Add</button>
             <div>Filter</div>
-            <button onClick={() => loadEntries()}>Search</button>
-            <button onClick={() => filtersDispatch({type: 'reset'})}>Reset</button>
+            <button onClick={e => changeFilters()}>Search</button>
+            <button onClick={e => resetFilters()}>Reset</button>
             <div>
-                <label>Search: </label>
+                <label>Seach: </label>
                 <input
                     type='text'
-                    value={filters._search}
-                    onChange={e => filtersDispatch({type: 'searchChange', value: e.target.value})}
+                    {... bindSearch}
                 />
             </div>
             <div>
                 <label>Date From: </label>
                 <input
                     type='date'
-                    value={filters._date_from}
-                    onChange={e => filtersDispatch({type: 'dateFromChange', value: e.target.value})}
+                    {... bindDateFrom}
                 />
             </div>
             <div>
                 <label>Date To: </label>
                 <input
                     type='date'
-                    value={filters._date_to}
-                    onChange={e => filtersDispatch({type: 'dateToChange', value: e.target.value})}
+                    {... bindDateTo}
                 />
             </div>
             <div>
                 <label>Type: </label>
                 <select 
-                    value={filters.type} 
-                    onChange={e => filtersDispatch({type: 'typeChange', value: e.target.value})}
+                    value={typeFilter}
+                    onChange={typeChangeHandler}
                 >
                     <option value="all">All</option>
                     <option value="transportation">Transportation</option>
                     <option value="food">Food</option>
                     <option value="others">Others</option>
                 </select>
+            </div>
+            <button onClick={e => setForm({id: 0})}>Add</button>
+            <div>
+                <label>Sum: </label>
+                {sum}
             </div>
             <div>Entries</div>
             {entries.map(entry => <Entry key={entry.id} entry={entry} setForm={setForm} deleteEntry={deleteEntry}/>)}
