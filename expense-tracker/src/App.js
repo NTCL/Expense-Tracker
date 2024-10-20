@@ -87,7 +87,7 @@ function App() {
     }
 
     // for filters
-    
+
     const typeChangeHandler = e => {
         setTypeFilter(e.target.value);
         filtersDispatch({
@@ -171,8 +171,7 @@ function App() {
         <div className="App">
             <form onSubmit={submitHandler}>
                 <div>
-                    <label>ID: </label>
-                    {id}
+                    <h3>{id ? `Edit expense ${id}` : 'Add expense'}</h3>
                 </div>
                 <div>
                     <label>Description: </label>
@@ -205,9 +204,9 @@ function App() {
                         <option value="others">Others</option>
                     </select>
                 </div>
-                <button>Submit</button>
+                <button>{id ? 'Edit' : 'Add'}</button>
             </form>
-            <div>Filter</div>
+            <h3>Filters</h3>
             <button onClick={e => changeFilters()}>Search</button>
             <button onClick={e => resetFilters()}>Reset</button>
             <div>
@@ -243,13 +242,19 @@ function App() {
                     <option value="others">Others</option>
                 </select>
             </div>
-            <button onClick={e => setForm({id: 0})}>Add</button>
+            <h3>Summary</h3>
             <div>
-                <label>Sum: </label>
-                {sum}
+                <label>Total expense: </label>
+                ${sum}
             </div>
-            <div>Entries</div>
-            {entries.map(entry => <Entry key={entry.id} entry={entry} setForm={setForm} deleteEntry={deleteEntry}/>)}
+            <h3>Entries</h3>
+            <button onClick={e => setForm({id: 0})}>Add</button>
+            {entries.map(entry => 
+                <Entry 
+                    key={entry.id} 
+                    entry={entry} 
+                    setForm={setForm} 
+                    deleteEntry={deleteEntry}/>)}
         </div>
     );
 }
