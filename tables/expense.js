@@ -113,13 +113,19 @@ class expense {
 
         if(typeof(query.orders) != 'undefined') {
             const ordersQuery = JSON.parse(query.orders);
-            if(typeof(ordersQuery.date) != 'undefined' && ['ASC', 'DESC'].includes(ordersQuery.date)) {
+            if(typeof(ordersQuery.date) != 'undefined') {
+                if(!['ASC', 'DESC'].includes(ordersQuery.date)) {
+                    return new Error(`Invalid type ordering direction : ${ordersQuery.date}`);
+                }
                 orders.push({
                     sql: `date ${ordersQuery.date}`
                 });
             }
     
-            if(typeof(ordersQuery.amount) != 'undefined' && ['ASC', 'DESC'].includes(ordersQuery.amount)) {
+            if(typeof(ordersQuery.amount) != 'undefined') {
+                if(!['ASC', 'DESC'].includes(ordersQuery.amount)) {
+                    return new Error(`Invalid amount ordering direction: ${ordersQuery.amount}`);
+                }
                 orders.push({
                     sql: `amount ${ordersQuery.amount}`
                 });
