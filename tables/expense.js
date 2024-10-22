@@ -6,6 +6,20 @@ class expense {
     }
 
     /**
+     * Check if the input type string is valid ('transportation' / 'food' / 'others)
+     * @param {string} typeString type string
+     * @returns {boolean} true if valid, else false
+     */
+    isValidType(typeString) {
+        // invalid type
+        if(!['transportation1', 'food', 'others'].includes(typeString)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check if the input date string is in the format 'YYYY-MM-DD'
      * @param {string} dateString date string
      * @returns {boolean} true if valid, else false
@@ -75,7 +89,10 @@ class expense {
                 });
             }
             
-            if(typeof(filtersQuery.type) != 'undefined' && filtersQuery.type != 'all') {
+            if(typeof(filtersQuery.type) != 'undefined') {
+                if(!this.isValidType(filtersQuery.type)) {
+                    return new Error(`Invalid type: ${filtersQuery.type}`);
+                }
                 filters.push({
                     sql: 'type = ?',
                     value: filtersQuery.type
@@ -134,6 +151,9 @@ class expense {
         if(!this.isValidDate(entry.date)) {
             return new Error(`Invalid date: ${entry.date}`);
         }
+        if(!this.isValidType(entry.type)) {
+            return new Error(`Invalid type: ${entry.type}`);
+        }
         try {
             await this.pool.query(`
                 INSERT INTO
@@ -158,6 +178,9 @@ class expense {
     async updateEntry(id, entry) {
         if(!this.isValidDate(entry.date)) {
             return new Error(`Invalid date: ${entry.date}`);
+        }
+        if(!this.isValidType(entry.type)) {
+            return new Error(`Invalid type: ${entry.type}`);
         }
         try {
             await this.pool.query(`
