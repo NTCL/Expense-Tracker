@@ -15,7 +15,9 @@ app.get("/api", async (req, res) => {
 
     if(queryRes instanceof Error) {
         ret.success = false;
-        ret.error = queryRes;
+        ret.error = {
+            mesage: queryRes.message
+        };
     }
     else {
         ret.data = queryRes;
@@ -57,7 +59,9 @@ app.post("/api", bodyParser.urlencoded(), async (req, res) => {
 
     if(queryRes instanceof Error) {
         ret.success = false;
-        ret.error = queryRes;
+        ret.error = {
+            mesage: queryRes.message
+        };
     }
 
     res.json(ret);

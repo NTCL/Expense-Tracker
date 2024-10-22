@@ -1,9 +1,28 @@
 const mysql = require('mysql2/promise');
-require('dotenv').config();
 
 class expense {
     constructor(pool) {
         this.pool = pool;
+    }
+
+    /**
+     * Check if the input date string is in the format 'YYYY-MM-DD'
+     * @param {string} dateString date string
+     * @returns {boolean} true if valid, else false
+     */
+    isValidDate(dateString) {
+        const date = new Date(dateString);
+        // invalid date
+        if(isNaN(date)) {
+            return false;
+        }
+
+        // valid date but not in the format 'YYYY-MM-DD'
+        if(dateString != date.toISOString().split('T')[0]) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -36,14 +55,20 @@ class expense {
                 });
             }
     
-            if(typeof(filtersQuery._date_from) != 'undefined' && filtersQuery._date_from != '') {
+            if(typeof(filtersQuery._date_from) != 'undefined') {
+                if(!this.isValidDate(filtersQuery._date_from)) {
+                    return new Error(`Invalid _date_from: ${filtersQuery._date_from}`);
+                }
                 filters.push({
                     sql: 'DATE(date) >= ?',
                     value: filtersQuery._date_from
                 });
             }
     
-            if(typeof(filtersQuery._date_to) != 'undefined' && filtersQuery._date_to != '') {
+            if(typeof(filtersQuery._date_to) != 'undefined') {
+                if(!this.isValidDate(filtersQuery._date_to)) {
+                    return new Error(`Invalid _date_to: ${filtersQuery._date_to}`);
+                }
                 filters.push({
                     sql: 'DATE(date) <= ?',
                     value: filtersQuery._date_to
@@ -106,6 +131,9 @@ class expense {
      * @returns {boolean|object} true on success, or error object on failure
      */
     async addEntry(entry) {
+        if(!this.isValidDate(entry.date)) {
+            return new Error(`Invalid date: ${entry.date}`);
+        }
         try {
             await this.pool.query(`
                 INSERT INTO
@@ -128,6 +156,9 @@ class expense {
      * @returns {boolean|object} true on success, or error object on failure
      */
     async updateEntry(id, entry) {
+        if(!this.isValidDate(entry.date)) {
+            return new Error(`Invalid date: ${entry.date}`);
+        }
         try {
             await this.pool.query(`
                 UPDATE
