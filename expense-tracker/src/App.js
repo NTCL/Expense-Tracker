@@ -4,6 +4,7 @@ import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 
 const INITIAL_TYPE_FILTER = 'all';
+const INITIAL_ORDER = '';
 
 const initialFilters = {
     _search: '',
@@ -25,6 +26,27 @@ const filtersReducer = (currentFilters, action) => {
     }
 }
 
+const initialOrders = {
+    date: INITIAL_ORDER,
+    amount: INITIAL_ORDER
+};
+const ordersReducer = (currentOrders, action) => {
+    switch(action.type) {
+        case "changeDate":
+            return {
+                ...currentOrders,
+                date: action.value
+            };
+        case "changeAmount":
+            return {
+                ...currentOrders,
+                amount: action.value
+            };
+        default:
+            return currentOrders;
+    }
+}
+
 function App() {
     // for expense entry form
     const [description, setDescription, bindDescription, resetDescription] = useInput('');
@@ -38,6 +60,8 @@ function App() {
     const [dateFrom, setDateFrom, bindDateFrom, resetDateFrom] = useInput('');
     const [dateTo, setDateTo, bindDateTo, resetDateTo] = useInput('');
     const [typeFilter, setTypeFilter] = useState(INITIAL_TYPE_FILTER);
+    // for sorting
+    const [orders, ordersDispatch] = useReducer(ordersReducer, initialOrders);
     // for entries
     const [entries, setEntries] = useState([]);
     // for summary
@@ -127,7 +151,10 @@ function App() {
 
     // load entries
     const loadEntries = () => {
-        fetch("/api?" + new URLSearchParams(filters))
+        fetch("/api?" + new URLSearchParams({
+            filters: JSON.stringify(filters),
+            orders: JSON.stringify(orders)
+        }))
         .then(result => result.json())
         .then(json => {
             if(typeof(json.error) == 'undefined') {
@@ -155,10 +182,10 @@ function App() {
         });
     }
 
-    // load entries in the beginning and reload on filter change
+    // load entries in the beginning and reload on filter or order change
     useEffect(() => {
         loadEntries();
-    }, [filters]);
+    }, [filters, orders]);
 
     // for summary
 
@@ -236,10 +263,33 @@ function App() {
                     value={typeFilter}
                     onChange={typeChangeHandler}
                 >
-                    <option value="all">All</option>
+                    <option value={INITIAL_TYPE_FILTER}>All</option>
                     <option value="transportation">Transportation</option>
                     <option value="food">Food</option>
                     <option value="others">Others</option>
+                </select>
+            </div>
+            <h3>Order</h3>
+            <div>
+                <label>Date: </label>
+                <select
+                    value={orders.date}
+                    onChange={e => ordersDispatch({type: 'changeDate', value: e.target.value})}
+                >
+                    <option value={INITIAL_ORDER}>Unsorted</option>
+                    <option value="ASC">Oldest First</option>
+                    <option value="DESC">Latest First</option>
+                </select>
+            </div>
+            <div>
+                <label>Amount: </label>
+                <select
+                    value={orders.amount}
+                    onChange={e => ordersDispatch({type: 'changeAmount', value: e.target.value})}
+                >
+                    <option value={INITIAL_ORDER}>Unsorted</option>
+                    <option value="ASC">Smallest First</option>
+                    <option value="DESC">Largest First</option>
                 </select>
             </div>
             <h3>Summary</h3>

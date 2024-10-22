@@ -23,43 +23,71 @@ class expense {
                 expense
         `;
 
+        let values = [];
+
         let filters = [];
 
-        if(typeof(query._search) != 'undefined' && query._search != '') {
-            filters.push({
-                sql: 'description LIKE ?',
-                value: `%${query._search}%`
-            });
-        }
+        if(typeof(query.filters) != 'undefined') {
+            const filtersQuery = JSON.parse(query.filters);
+            if(typeof(filtersQuery._search) != 'undefined' && filtersQuery._search != '') {
+                filters.push({
+                    sql: 'description LIKE ?',
+                    value: `%${filtersQuery._search}%`
+                });
+            }
+    
+            if(typeof(filtersQuery._date_from) != 'undefined' && filtersQuery._date_from != '') {
+                filters.push({
+                    sql: 'DATE(date) >= ?',
+                    value: filtersQuery._date_from
+                });
+            }
+    
+            if(typeof(filtersQuery._date_to) != 'undefined' && filtersQuery._date_to != '') {
+                filters.push({
+                    sql: 'DATE(date) <= ?',
+                    value: filtersQuery._date_to
+                });
+            }
+            
+            if(typeof(filtersQuery.type) != 'undefined' && filtersQuery.type != 'all') {
+                filters.push({
+                    sql: 'type = ?',
+                    value: filtersQuery.type
+                });
+            }
 
-        if(typeof(query._date_from) != 'undefined' && query._date_from != '') {
-            filters.push({
-                sql: 'DATE(date) >= ?',
-                value: query._date_from
-            });
         }
-
-        if(typeof(query._date_to) != 'undefined' && query._date_to != '') {
-            filters.push({
-                sql: 'DATE(date) <= ?',
-                value: query._date_to
-            });
-        }
-        
-        if(typeof(query.type) != 'undefined' && query.type != 'all') {
-            filters.push({
-                sql: 'type = ?',
-                value: query.type
-            });
-        }
-
-        let values = [];
 
         if(filters.length) {
             sql += ' WHERE ';
             filters.forEach((filter, index) => {
-                sql += (index ? ' AND ' : ' ') + filter.sql + ' ';
+                sql += (index ? ' AND ' : '') + filter.sql;
                 values.push(filter.value);
+            });
+        }
+
+        let orders = [];
+
+        if(typeof(query.orders) != 'undefined') {
+            const ordersQuery = JSON.parse(query.orders);
+            if(typeof(ordersQuery.date) != 'undefined' && ['ASC', 'DESC'].includes(ordersQuery.date)) {
+                orders.push({
+                    sql: `date ${ordersQuery.date}`
+                });
+            }
+    
+            if(typeof(ordersQuery.amount) != 'undefined' && ['ASC', 'DESC'].includes(ordersQuery.amount)) {
+                orders.push({
+                    sql: `amount ${ordersQuery.amount}`
+                });
+            }
+        }
+
+        if(orders.length) {
+            sql += ' ORDER BY ';
+            orders.forEach((order, index) => {
+                sql += (index ? ', ' : '') + order.sql;
             });
         }
 
