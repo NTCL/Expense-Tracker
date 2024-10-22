@@ -3,14 +3,11 @@ import {useEffect, useState, useReducer} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 
-const INITIAL_TYPE_FILTER = 'all';
-const INITIAL_ORDER = '';
-
 const initialFilters = {
     _search: '',
     _date_from: '',
     _date_to: '',
-    type: INITIAL_TYPE_FILTER
+    type: ''
 };
 const filtersReducer = (currentFilters, action) => {
     switch(action.type) {
@@ -27,8 +24,8 @@ const filtersReducer = (currentFilters, action) => {
 }
 
 const initialOrders = {
-    date: INITIAL_ORDER,
-    amount: INITIAL_ORDER
+    date: '',
+    amount: ''
 };
 const ordersReducer = (currentOrders, action) => {
     switch(action.type) {
@@ -59,7 +56,7 @@ function App() {
     const [search, setSearch, bindSearch, resetSearch] = useInput('');
     const [dateFrom, setDateFrom, bindDateFrom, resetDateFrom] = useInput('');
     const [dateTo, setDateTo, bindDateTo, resetDateTo] = useInput('');
-    const [typeFilter, setTypeFilter] = useState(INITIAL_TYPE_FILTER);
+    const [typeFilter, setTypeFilter] = useState('');
     // for sorting
     const [orders, ordersDispatch] = useReducer(ordersReducer, initialOrders);
     // for entries
@@ -144,17 +141,40 @@ function App() {
         resetSearch();
         resetDateFrom();
         resetDateTo();
-        setTypeFilter(INITIAL_TYPE_FILTER);
+        setTypeFilter('');
     }
 
     // for entries
 
     // load entries
     const loadEntries = () => {
-        fetch("/api?" + new URLSearchParams({
-            filters: JSON.stringify(filters),
-            orders: JSON.stringify(orders)
-        }))
+
+        const filtersQuery = {};
+        Object.keys(filters).forEach(name => {
+            if(filters[name] == '') {
+                return;
+            }
+            filtersQuery[name] = filters[name];
+        });
+
+        const ordersQuery = {};
+        Object.keys(orders).forEach(name => {
+            if(orders[name] == '') {
+                return;
+            }
+            ordersQuery[name] = orders[name];
+        });
+
+        const params = {};
+        if(Object.keys(filtersQuery).length) {
+            params.filters = JSON.stringify(filtersQuery);
+        }
+        if(Object.keys(ordersQuery).length) {
+            params.orders = JSON.stringify(ordersQuery);
+        }
+
+
+        fetch("/api?" + new URLSearchParams(params))
         .then(result => result.json())
         .then(json => {
             if(typeof(json.error) == 'undefined') {
@@ -263,7 +283,7 @@ function App() {
                     value={typeFilter}
                     onChange={typeChangeHandler}
                 >
-                    <option value={INITIAL_TYPE_FILTER}>All</option>
+                    <option value=''>All</option>
                     <option value="transportation">Transportation</option>
                     <option value="food">Food</option>
                     <option value="others">Others</option>
@@ -276,7 +296,7 @@ function App() {
                     value={orders.date}
                     onChange={e => ordersDispatch({type: 'changeDate', value: e.target.value})}
                 >
-                    <option value={INITIAL_ORDER}>Unsorted</option>
+                    <option value=''>Unsorted</option>
                     <option value="ASC">Oldest First</option>
                     <option value="DESC">Latest First</option>
                 </select>
@@ -287,7 +307,7 @@ function App() {
                     value={orders.amount}
                     onChange={e => ordersDispatch({type: 'changeAmount', value: e.target.value})}
                 >
-                    <option value={INITIAL_ORDER}>Unsorted</option>
+                    <option value=''>Unsorted</option>
                     <option value="ASC">Smallest First</option>
                     <option value="DESC">Largest First</option>
                 </select>
