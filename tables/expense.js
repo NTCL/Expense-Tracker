@@ -12,7 +12,7 @@ class expense {
      */
     isValidType(typeString) {
         // invalid type
-        if(!['transportation1', 'food', 'others'].includes(typeString)) {
+        if(!['transportation', 'food', 'others'].includes(typeString)) {
             return false;
         }
 
