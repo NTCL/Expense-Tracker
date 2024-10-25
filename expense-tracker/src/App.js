@@ -64,8 +64,11 @@ function App() {
     const [entries, setEntries] = useState([]);
     // for summary
     const [sum, setSum] = useState(0);
-    // for dialog
-    const dialogRef = useRef(null);
+    // for form dialog
+    const formDialogRef = useRef(null);
+    // for error dialog
+    const errorDialogRef = useRef(null);
+    const [error, setError] = useState('');
 
     // for expense entry form
 
@@ -106,8 +109,10 @@ function App() {
         .then(json => {
             if(typeof(json.error) == 'undefined') {
                 loadEntries();
+                return;
             }
-            // need error handling
+            setError(json.error.message);
+            showErrorDialog();
         });
     }
 
@@ -183,8 +188,11 @@ function App() {
         .then(json => {
             if(typeof(json.error) == 'undefined') {
                 setEntries(json.data);
+                return;
             }
-            // need error handling
+
+            setError(json.error.message);
+            showErrorDialog();
         });
     };
 
@@ -197,12 +205,15 @@ function App() {
             method: "POST",
             body: formData
         })
+        .then(result => result.json())
         .then(json => {
             if(typeof(json.error) == 'undefined') {
                 resetForm();
                 loadEntries();
+                return;
             }
-            // need error handling
+            setError(json.error.message);
+            showErrorDialog();
         });
     }
 
@@ -218,14 +229,22 @@ function App() {
         setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
     }, [entries]);
 
-    // for dialog
-    const showDialog = () => dialogRef.current.show();
-    const hideDialog = () => dialogRef.current.hide();
+    // for form dialog
+    const showDialog = () => formDialogRef.current.show();
+    const hideDialog = () => formDialogRef.current.hide();
+
+    // for error dialog
+    const showErrorDialog = () => errorDialogRef.current.show();
 
     return (
         <div className="App">
             <Dialog
-                ref={dialogRef}
+                ref={errorDialogRef}
+            >
+                <div>{error}</div>
+            </Dialog>
+            <Dialog
+                ref={formDialogRef}
             >
                 <form onSubmit={submitHandler}>
                     <div>
@@ -332,8 +351,8 @@ function App() {
             </div>
             <h3>Entries</h3>
             <button onClick={e => {
-                showDialog();
                 setForm({id: 0});
+                showDialog();
             }}>Add</button>
             {entries.map(entry => 
                 <Entry 
