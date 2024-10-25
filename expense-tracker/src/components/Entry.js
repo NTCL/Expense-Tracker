@@ -1,4 +1,4 @@
-function Entry({entry, setForm, deleteEntry}) {
+function Entry({entry, showDialog, setForm, deleteEntry}) {
     return (
         <div>
             <div>
@@ -13,7 +13,10 @@ function Entry({entry, setForm, deleteEntry}) {
             <div>
                 {entry.type}
             </div>
-            <button onClick={() => setForm(entry)}>Edit</button>
+            <button onClick={() => {
+                setForm(entry);
+                showDialog();
+            }}>Edit</button>
             <button onClick={() => deleteEntry(entry)}>Delete</button>
         </div>
     );

@@ -1,7 +1,8 @@
 import "./App.css";
-import {useEffect, useState, useReducer} from 'react';
+import {useEffect, useState, useReducer, useRef} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
+import Dialog from './components/Dialog';
 
 const initialFilters = {
     _search: '',
@@ -63,6 +64,8 @@ function App() {
     const [entries, setEntries] = useState([]);
     // for summary
     const [sum, setSum] = useState(0);
+    // for dialog
+    const dialogRef = useRef(null);
 
     // for expense entry form
 
@@ -87,6 +90,7 @@ function App() {
 
     const submitHandler = e => {
         e.preventDefault();
+        hideDialog();
         const formData = new URLSearchParams();
         formData.append("id", id);
         formData.append("description", description);
@@ -214,45 +218,54 @@ function App() {
         setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
     }, [entries]);
 
+    // for dialog
+    const showDialog = () => dialogRef.current.show();
+    const hideDialog = () => dialogRef.current.hide();
+
     return (
         <div className="App">
-            <form onSubmit={submitHandler}>
-                <div>
-                    <h3>{id ? `Edit expense ${id}` : 'Add expense'}</h3>
-                </div>
-                <div>
-                    <label>Description: </label>
-                    <input
-                        type='text'
-                        {... bindDescription}
-                    />
-                </div>
-                <div>
-                    <label>Amount: </label>
-                    <input
-                        type='number'
-                        step='0.1'
-                        min='0'
-                        {... bindAmount}
-                    />
-                </div>
-                <div>
-                    <label>Date: </label>
-                    <input
-                        type='date'
-                        {... bindDate}
-                    />
-                </div>
-                <div>
-                    <label>Type: </label>
-                    <select {... bindType}>
-                        <option value="transportation">Transportation</option>
-                        <option value="food">Food</option>
-                        <option value="others">Others</option>
-                    </select>
-                </div>
-                <button>{id ? 'Edit' : 'Add'}</button>
-            </form>
+            <Dialog
+                ref={dialogRef}
+            >
+                <form onSubmit={submitHandler}>
+                    <div>
+                        <h3>{id ? `Edit expense ${id}` : 'Add expense'}</h3>
+                    </div>
+                    <div>
+                        <label>Description: </label>
+                        <input
+                            type='text'
+                            {... bindDescription}
+                        />
+                    </div>
+                    <div>
+                        <label>Amount: </label>
+                        <input
+                            type='number'
+                            step='0.1'
+                            min='0'
+                            {... bindAmount}
+                        />
+                    </div>
+                    <div>
+                        <label>Date: </label>
+                        <input
+                            type='date'
+                            {... bindDate}
+                        />
+                    </div>
+                    <div>
+                        <label>Type: </label>
+                        <select {... bindType}>
+                            <option value="transportation">Transportation</option>
+                            <option value="food">Food</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+                    <button>{id ? 'Edit' : 'Add'}</button>
+                </form>
+            </Dialog>
+            <h1>Expense Tracker</h1>
             <h3>Filters</h3>
             <button onClick={e => changeFilters()}>Search</button>
             <button onClick={e => resetFilters()}>Reset</button>
@@ -318,12 +331,16 @@ function App() {
                 ${sum}
             </div>
             <h3>Entries</h3>
-            <button onClick={e => setForm({id: 0})}>Add</button>
+            <button onClick={e => {
+                showDialog();
+                setForm({id: 0});
+            }}>Add</button>
             {entries.map(entry => 
                 <Entry 
                     key={entry.id} 
-                    entry={entry} 
-                    setForm={setForm} 
+                    entry={entry}
+                    showDialog={showDialog}
+                    setForm={setForm}
                     deleteEntry={deleteEntry}/>)}
         </div>
     );
