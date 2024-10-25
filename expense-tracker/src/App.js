@@ -82,8 +82,8 @@ function App() {
 
     const setForm = (entry) => {
         resetForm();
-        setId(entry.id);
         if(entry.id > 0) {
+            setId(entry.id);
             setDescription(entry.description);
             setAmount(entry.amount);
             setDate(entry.date);
@@ -100,7 +100,6 @@ function App() {
         formData.append("amount", amount);
         formData.append("date", date);
         formData.append("type", type);
-        resetForm();
         fetch("/api", {
             method: "POST",
             body: formData
@@ -208,7 +207,6 @@ function App() {
         .then(result => result.json())
         .then(json => {
             if(typeof(json.error) == 'undefined') {
-                resetForm();
                 loadEntries();
                 return;
             }
