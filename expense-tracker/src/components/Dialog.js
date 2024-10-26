@@ -8,8 +8,8 @@ const Dialog = forwardRef((props, ref) => {
         width:'300px',
         height: '200px',
         position: 'fixed',
-        top: 'calc(50% - 150px)',
-        left: 'calc(50% - 100px)',
+        top: 'calc(50% - 100px)',
+        left: 'calc(50% - 150px)',
         zIndex: '1',
         backgroundColor: 'white',
         border: 'solid 1px black'
