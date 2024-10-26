@@ -6,8 +6,29 @@ const app = express();
 db.init();
 
 app.get("/api", async (req, res) => {
-    const expense = db.factory('expense');
-    const queryRes = await expense.getEntries(req.query);
+    const table = req.query.table;
+    if(typeof(table) == 'undefined') {
+        res.json({
+            success: false,
+            error: {
+                message: 'Missing table'
+            }
+        });
+    }
+
+    let queryRes = false;
+    switch(table) {
+        case 'expense':
+            const expense = db.factory(table);
+            queryRes = await expense.getEntries(req.query);
+            break;
+        case 'type':
+            const type = db.factory(table);
+            queryRes = await type.getTypes();
+            break;
+        default:
+            queryRes = new Error(`Invalid table: ${table}`)
+    }
 
     const ret = {
         success : true

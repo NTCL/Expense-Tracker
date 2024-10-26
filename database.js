@@ -21,9 +21,27 @@ const init = async () => {
                 description VARCHAR(255) NOT NULL DEFAULT '',
                 amount DECIMAL(11,1) NOT NULL DEFAULT 0.0,
                 date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                type VARCHAR(255) NOT NULL DEFAULT 'Others',
+                type_id INT(11) NOT NULL DEFAULT 0,
+                PRIMARY KEY (id),
+                FOREIGN KEY (type_id) REFERENCES type(id)
+            )
+        `);
+
+        await con.query(`
+            CREATE TABLE IF NOT EXISTS type (
+                id INT(11) NOT NULL AUTO_INCREMENT,
+                name VARCHAR(255) NOT NULL DEFAULT '' UNIQUE,
                 PRIMARY KEY (id)
             )
+        `);
+
+        await con.query(`
+            INSERT INTO
+                type (name)
+            VALUES
+                ('others')
+            ON DUPLICATE KEY UPDATE
+                id = id
         `);
     }
     catch (err) {

@@ -1,4 +1,4 @@
-const mysql = require('mysql2/promise');
+const db = require('../database');
 
 class expense {
     constructor(pool) {
@@ -6,13 +6,15 @@ class expense {
     }
 
     /**
-     * Check if the input type string is valid ('transportation' / 'food' / 'others)
-     * @param {string} typeString type string
+     * Check if the input type id is valid
+     * @param {string} typeId type id
      * @returns {boolean} true if valid, else false
      */
-    isValidType(typeString) {
+    async isValidTypeId(typeId) {
+        const type = db.factory('type');
+        const types = await type.getTypes();
         // invalid type
-        if(!['transportation', 'food', 'others'].includes(typeString)) {
+        if(!types.map(t => t.id).includes(typeId)) {
             return false;
         }
 
@@ -47,13 +49,18 @@ class expense {
     async getEntries(query) {
         let sql = `
             SELECT
-                id,
-                description,
-                amount,
-                DATE_FORMAT(date, '%Y-%m-%d') AS date,
-                type
+                expense.id,
+                expense.description,
+                expense.amount,
+                DATE_FORMAT(expense.date, '%Y-%m-%d') AS date,
+                expense.type_id,
+                type.name AS type_id_name
             FROM
                 expense
+            LEFT JOIN
+                type
+            ON
+                expense.type_id = type.id
         `;
 
         let values = [];
@@ -64,7 +71,7 @@ class expense {
             const filtersQuery = JSON.parse(query.filters);
             if(typeof(filtersQuery._search) != 'undefined' && filtersQuery._search != '') {
                 filters.push({
-                    sql: 'description LIKE ?',
+                    sql: 'expense.description LIKE ?',
                     value: `%${filtersQuery._search}%`
                 });
             }
@@ -74,7 +81,7 @@ class expense {
                     return new Error(`Invalid _date_from: ${filtersQuery._date_from}`);
                 }
                 filters.push({
-                    sql: 'DATE(date) >= ?',
+                    sql: 'DATE(expense.date) >= ?',
                     value: filtersQuery._date_from
                 });
             }
@@ -84,18 +91,18 @@ class expense {
                     return new Error(`Invalid _date_to: ${filtersQuery._date_to}`);
                 }
                 filters.push({
-                    sql: 'DATE(date) <= ?',
+                    sql: 'DATE(expense.date) <= ?',
                     value: filtersQuery._date_to
                 });
             }
             
-            if(typeof(filtersQuery.type) != 'undefined') {
-                if(!this.isValidType(filtersQuery.type)) {
-                    return new Error(`Invalid type: ${filtersQuery.type}`);
+            if(typeof(filtersQuery.type_id) != 'undefined') {
+                if(!this.isValidTypeId(filtersQuery.type_id)) {
+                    return new Error(`Invalid type_id: ${filtersQuery.type_id}`);
                 }
                 filters.push({
-                    sql: 'type = ?',
-                    value: filtersQuery.type
+                    sql: 'expense.type_id = ?',
+                    value: parseInt(filtersQuery.type_id)
                 });
             }
 
@@ -118,7 +125,7 @@ class expense {
                     return new Error(`Invalid type ordering direction : ${ordersQuery.date}`);
                 }
                 orders.push({
-                    sql: `date ${ordersQuery.date}`
+                    sql: `expense.date ${ordersQuery.date}`
                 });
             }
     
@@ -127,7 +134,7 @@ class expense {
                     return new Error(`Invalid amount ordering direction: ${ordersQuery.amount}`);
                 }
                 orders.push({
-                    sql: `amount ${ordersQuery.amount}`
+                    sql: `expense.amount ${ordersQuery.amount}`
                 });
             }
         }
@@ -157,9 +164,10 @@ class expense {
         if(!this.isValidDate(entry.date)) {
             return new Error(`Invalid date: ${entry.date}`);
         }
-        if(!this.isValidType(entry.type)) {
-            return new Error(`Invalid type: ${entry.type}`);
+        if(!this.isValidTypeId(entry.type_id)) {
+            return new Error(`Invalid type_id: ${entry.type_id}`);
         }
+        entry.type_id = parseInt(entry.type_id);
         try {
             await this.pool.query(`
                 INSERT INTO
@@ -185,9 +193,10 @@ class expense {
         if(!this.isValidDate(entry.date)) {
             return new Error(`Invalid date: ${entry.date}`);
         }
-        if(!this.isValidType(entry.type)) {
-            return new Error(`Invalid type: ${entry.type}`);
+        if(!this.isValidTypeId(entry.type_id)) {
+            return new Error(`Invalid type_id: ${entry.type_id}`);
         }
+        entry.type_id = parseInt(entry.type_id);
         try {
             await this.pool.query(`
                 UPDATE

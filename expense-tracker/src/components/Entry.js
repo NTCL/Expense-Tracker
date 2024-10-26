@@ -11,7 +11,7 @@ function Entry({entry, showDialog, setForm, deleteEntry}) {
                 {entry.date}
             </div>
             <div>
-                {entry.type}
+                {entry.type_id_name}
             </div>
             <button onClick={() => {
                 setForm(entry);

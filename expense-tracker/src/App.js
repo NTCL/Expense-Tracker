@@ -8,7 +8,7 @@ const initialFilters = {
     _search: '',
     _date_from: '',
     _date_to: '',
-    type: ''
+    type_id: ''
 };
 const filtersReducer = (currentFilters, action) => {
     switch(action.type) {
@@ -50,7 +50,7 @@ function App() {
     const [description, setDescription, bindDescription, resetDescription] = useInput('');
     const [amount, setAmount, bindAmount, resetAmount] = useInput('');
     const [date, setDate, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
-    const [type, setType, bindType, resetType] = useInput('others');
+    const [typeId, setTypeId, bindTypeId, resetTypeId] = useInput(1);
     const [id, setId] = useState(0);
     // for filters
     const [filters, filtersDispatch] = useReducer(filtersReducer, initialFilters);
@@ -58,6 +58,8 @@ function App() {
     const [dateFrom, setDateFrom, bindDateFrom, resetDateFrom] = useInput('');
     const [dateTo, setDateTo, bindDateTo, resetDateTo] = useInput('');
     const [typeFilter, setTypeFilter] = useState('');
+    // for types
+    const [types, setTypes] = useState([]);
     // for sorting
     const [orders, ordersDispatch] = useReducer(ordersReducer, initialOrders);
     // for entries
@@ -77,7 +79,7 @@ function App() {
         resetDescription();
         resetAmount();
         resetDate();
-        resetType();
+        resetTypeId();
     }
 
     const setForm = (entry) => {
@@ -87,7 +89,7 @@ function App() {
             setDescription(entry.description);
             setAmount(entry.amount);
             setDate(entry.date);
-            setType(entry.type);
+            setTypeId(entry.type_id);
         }
     };
 
@@ -99,7 +101,7 @@ function App() {
         formData.append("description", description);
         formData.append("amount", amount);
         formData.append("date", date);
-        formData.append("type", type);
+        formData.append("type_id", typeId);
         fetch("/api", {
             method: "POST",
             body: formData
@@ -125,7 +127,7 @@ function App() {
                 _search: search,
                 _date_from: dateFrom,
                 _date_to: dateTo,
-                type: e.target.value
+                type_id: e.target.value
             }
         });
     }
@@ -138,7 +140,7 @@ function App() {
                 _search: search,
                 _date_from: dateFrom,
                 _date_to: dateTo,
-                type: typeFilter
+                type_id: typeFilter
             }
         });
     }
@@ -151,6 +153,32 @@ function App() {
         resetDateTo();
         setTypeFilter('');
     }
+
+    // for types
+
+    // load types
+    const loadTypes = () => {
+        const params = {
+            table: 'type'
+        };
+
+        fetch("/api?" + new URLSearchParams(params))
+        .then(result => result.json())
+        .then(json => {
+            if(typeof(json.error) == 'undefined') {
+                setTypes(json.data);
+                return;
+            }
+
+            setError(json.error.message);
+            showErrorDialog();
+        });
+    };
+
+    // load types in the beginning
+    useEffect(() => {
+        loadTypes();
+    }, []);
 
     // for entries
 
@@ -173,7 +201,9 @@ function App() {
             ordersQuery[name] = orders[name];
         });
 
-        const params = {};
+        const params = {
+            table: 'expense'
+        };
         if(Object.keys(filtersQuery).length) {
             params.filters = JSON.stringify(filtersQuery);
         }
@@ -273,10 +303,8 @@ function App() {
                     </div>
                     <div>
                         <label>Type: </label>
-                        <select {... bindType}>
-                            <option value="transportation">Transportation</option>
-                            <option value="food">Food</option>
-                            <option value="others">Others</option>
+                        <select {... bindTypeId}>
+                        {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
                         </select>
                     </div>
                     <button>{id ? 'Edit' : 'Add'}</button>
@@ -314,9 +342,7 @@ function App() {
                     onChange={typeChangeHandler}
                 >
                     <option value=''>All</option>
-                    <option value="transportation">Transportation</option>
-                    <option value="food">Food</option>
-                    <option value="others">Others</option>
+                    {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
                 </select>
             </div>
             <h3>Order</h3>
