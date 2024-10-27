@@ -2,6 +2,7 @@ import "./App.css";
 import {useEffect, useState, useReducer, useRef} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
+import Expense from './components/dialog/Expense';
 import Dialog from './components/Dialog';
 
 const initialFilters = {
@@ -46,12 +47,6 @@ const ordersReducer = (currentOrders, action) => {
 }
 
 function App() {
-    // for expense entry form
-    const [description, setDescription, bindDescription, resetDescription] = useInput('');
-    const [amount, setAmount, bindAmount, resetAmount] = useInput('');
-    const [date, setDate, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
-    const [typeId, setTypeId, bindTypeId, resetTypeId] = useInput(1);
-    const [id, setId] = useState(0);
     // for filters
     const [filters, filtersDispatch] = useReducer(filtersReducer, initialFilters);
     const [search, setSearch, bindSearch, resetSearch] = useInput('');
@@ -66,56 +61,11 @@ function App() {
     const [entries, setEntries] = useState([]);
     // for summary
     const [sum, setSum] = useState(0);
-    // for form dialog
-    const formDialogRef = useRef(null);
+    // for expense dialog
+    const expenseDialogRef = useRef(null);
     // for error dialog
     const errorDialogRef = useRef(null);
     const [error, setError] = useState('');
-
-    // for expense entry form
-
-    const resetForm = () => {
-        setId(0);
-        resetDescription();
-        resetAmount();
-        resetDate();
-        resetTypeId();
-    }
-
-    const setForm = (entry) => {
-        resetForm();
-        if(entry.id > 0) {
-            setId(entry.id);
-            setDescription(entry.description);
-            setAmount(entry.amount);
-            setDate(entry.date);
-            setTypeId(entry.type_id);
-        }
-    };
-
-    const submitHandler = e => {
-        e.preventDefault();
-        hideDialog();
-        const formData = new URLSearchParams();
-        formData.append("id", id);
-        formData.append("description", description);
-        formData.append("amount", amount);
-        formData.append("date", date);
-        formData.append("type_id", typeId);
-        fetch("/api", {
-            method: "POST",
-            body: formData
-        })
-        .then(result => result.json())
-        .then(json => {
-            if(typeof(json.error) == 'undefined') {
-                loadEntries();
-                return;
-            }
-            setError(json.error.message);
-            showErrorDialog();
-        });
-    }
 
     // for filters
 
@@ -257,58 +207,22 @@ function App() {
         setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
     }, [entries]);
 
-    // for form dialog
-    const showDialog = () => formDialogRef.current.show();
-    const hideDialog = () => formDialogRef.current.hide();
-
     // for error dialog
     const showErrorDialog = () => errorDialogRef.current.show();
 
     return (
         <div className="App">
+            <Expense 
+                ref={expenseDialogRef}
+                loadEntries={loadEntries}
+                setError={setError}
+                showErrorDialog={showErrorDialog}
+                types={types}
+            />
             <Dialog
                 ref={errorDialogRef}
             >
                 <div>{error}</div>
-            </Dialog>
-            <Dialog
-                ref={formDialogRef}
-            >
-                <form onSubmit={submitHandler}>
-                    <div>
-                        <h3>{id ? `Edit expense ${id}` : 'Add expense'}</h3>
-                    </div>
-                    <div>
-                        <label>Description: </label>
-                        <input
-                            type='text'
-                            {... bindDescription}
-                        />
-                    </div>
-                    <div>
-                        <label>Amount: </label>
-                        <input
-                            type='number'
-                            step='0.1'
-                            min='0'
-                            {... bindAmount}
-                        />
-                    </div>
-                    <div>
-                        <label>Date: </label>
-                        <input
-                            type='date'
-                            {... bindDate}
-                        />
-                    </div>
-                    <div>
-                        <label>Type: </label>
-                        <select {... bindTypeId}>
-                        {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
-                        </select>
-                    </div>
-                    <button>{id ? 'Edit' : 'Add'}</button>
-                </form>
             </Dialog>
             <h1>Expense Tracker</h1>
             <h3>Filters</h3>
@@ -375,15 +289,13 @@ function App() {
             </div>
             <h3>Entries</h3>
             <button onClick={e => {
-                setForm({id: 0});
-                showDialog();
+                expenseDialogRef.current.show({id: 0});
             }}>Add</button>
             {entries.map(entry => 
                 <Entry 
                     key={entry.id} 
                     entry={entry}
-                    showDialog={showDialog}
-                    setForm={setForm}
+                    showExpenseDialog={expenseDialogRef.current.show}
                     deleteEntry={deleteEntry}/>)}
         </div>
     );
