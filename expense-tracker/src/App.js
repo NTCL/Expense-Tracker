@@ -3,7 +3,7 @@ import {useEffect, useState, useReducer, useRef} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 import Expense from './components/dialog/Expense';
-import Dialog from './components/Dialog';
+import Error from './components/dialog/Error';
 
 const initialFilters = {
     _search: '',
@@ -61,11 +61,10 @@ function App() {
     const [entries, setEntries] = useState([]);
     // for summary
     const [sum, setSum] = useState(0);
-    // for expense dialog
-    const expenseDialogRef = useRef(null);
     // for error dialog
     const errorDialogRef = useRef(null);
-    const [error, setError] = useState('');
+    // for expense dialog
+    const expenseDialogRef = useRef(null);
 
     // for filters
 
@@ -119,9 +118,7 @@ function App() {
                 setTypes(json.data);
                 return;
             }
-
-            setError(json.error.message);
-            showErrorDialog();
+            errorDialogRef.current.show(json.error.message);
         });
     };
 
@@ -169,9 +166,7 @@ function App() {
                 setEntries(json.data);
                 return;
             }
-
-            setError(json.error.message);
-            showErrorDialog();
+            errorDialogRef.current.show(json.error.message);
         });
     };
 
@@ -190,8 +185,7 @@ function App() {
                 loadEntries();
                 return;
             }
-            setError(json.error.message);
-            showErrorDialog();
+            errorDialogRef.current.show(json.error.message);
         });
     }
 
@@ -207,23 +201,17 @@ function App() {
         setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
     }, [entries]);
 
-    // for error dialog
-    const showErrorDialog = () => errorDialogRef.current.show();
-
     return (
         <div className="App">
+            <Error
+                ref={errorDialogRef}
+            />
             <Expense 
                 ref={expenseDialogRef}
                 loadEntries={loadEntries}
-                setError={setError}
-                showErrorDialog={showErrorDialog}
+                errorDialogRef={errorDialogRef}
                 types={types}
             />
-            <Dialog
-                ref={errorDialogRef}
-            >
-                <div>{error}</div>
-            </Dialog>
             <h1>Expense Tracker</h1>
             <h3>Filters</h3>
             <button onClick={e => changeFilters()}>Search</button>

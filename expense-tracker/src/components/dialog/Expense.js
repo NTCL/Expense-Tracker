@@ -2,16 +2,15 @@ import {forwardRef, useState, useRef, useImperativeHandle} from 'react';
 import useInput from '../../hooks/useInput';
 import Dialog from '../Dialog';
 
-const Expense = forwardRef(({loadEntries, setError, showErrorDialog, types}, ref) => {
+const Expense = forwardRef(({loadEntries, errorDialogRef, types}, ref) => {
+    const dialogRef = useRef(null);
+
     // form field
     const [id, setId] = useState(0);
     const [description, setDescription, bindDescription, resetDescription] = useInput('');
     const [amount, setAmount, bindAmount, resetAmount] = useInput('');
     const [date, setDate, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
     const [typeId, setTypeId, bindTypeId, resetTypeId] = useInput(1);
-
-    // for dialog
-    const dialogRef = useRef(null);
 
     const resetForm = () => {
         setId(0);
@@ -51,8 +50,7 @@ const Expense = forwardRef(({loadEntries, setError, showErrorDialog, types}, ref
                 loadEntries();
                 return;
             }
-            setError(json.error.message);
-            showErrorDialog();
+            errorDialogRef.current.show(json.error.message);
         });
     }
 
@@ -67,9 +65,7 @@ const Expense = forwardRef(({loadEntries, setError, showErrorDialog, types}, ref
     }));
 
     return (
-        <Dialog
-            ref={dialogRef}
-        >
+        <Dialog ref={dialogRef}>
             <form onSubmit={submitHandler}>
                 <div>
                     <h3>{id ? `Edit expense ${id}` : 'Add expense'}</h3>
