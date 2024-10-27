@@ -1,4 +1,4 @@
-const db = require('../database');
+const db = require('../database'); 
 
 class expense {
     constructor(pool) {
@@ -97,7 +97,7 @@ class expense {
             }
             
             if(typeof(filtersQuery.type_id) != 'undefined') {
-                if(!this.isValidTypeId(filtersQuery.type_id)) {
+                if(!await this.isValidTypeId(filtersQuery.type_id)) {
                     return new Error(`Invalid type_id: ${filtersQuery.type_id}`);
                 }
                 filters.push({
@@ -164,7 +164,8 @@ class expense {
         if(!this.isValidDate(entry.date)) {
             return new Error(`Invalid date: ${entry.date}`);
         }
-        if(!this.isValidTypeId(entry.type_id)) {
+
+        if(entry.type_id != '0' && !await this.isValidTypeId(entry.type_id)) {
             return new Error(`Invalid type_id: ${entry.type_id}`);
         }
         entry.type_id = parseInt(entry.type_id);
@@ -193,7 +194,7 @@ class expense {
         if(!this.isValidDate(entry.date)) {
             return new Error(`Invalid date: ${entry.date}`);
         }
-        if(!this.isValidTypeId(entry.type_id)) {
+        if(entry.type_id != '0' && !await this.isValidTypeId(entry.type_id)) {
             return new Error(`Invalid type_id: ${entry.type_id}`);
         }
         entry.type_id = parseInt(entry.type_id);

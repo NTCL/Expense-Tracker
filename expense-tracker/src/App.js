@@ -9,7 +9,7 @@ const initialFilters = {
     _search: '',
     _date_from: '',
     _date_to: '',
-    type_id: ''
+    type_id: 0
 };
 const filtersReducer = (currentFilters, action) => {
     switch(action.type) {
@@ -52,7 +52,7 @@ function App() {
     const [search, setSearch, bindSearch, resetSearch] = useInput('');
     const [dateFrom, setDateFrom, bindDateFrom, resetDateFrom] = useInput('');
     const [dateTo, setDateTo, bindDateTo, resetDateTo] = useInput('');
-    const [typeFilter, setTypeFilter] = useState('');
+    const [typeFilter, setTypeFilter] = useState(0);
     // for types
     const [types, setTypes] = useState([]);
     // for sorting
@@ -131,11 +131,23 @@ function App() {
 
     // load entries
     const loadEntries = () => {
-
         const filtersQuery = {};
         Object.keys(filters).forEach(name => {
-            if(filters[name] == '') {
-                return;
+            switch(name) {
+                case '_search':
+                case '_date_from':
+                case '_date_to':
+                    if(filters[name] == '') {
+                        return;
+                    }
+                    break;
+                case 'type_id':
+                    if(filters[name] == 0) {
+                        return;
+                    }
+                    break;
+                default:
+                    return;
             }
             filtersQuery[name] = filters[name];
         });
@@ -243,7 +255,7 @@ function App() {
                     value={typeFilter}
                     onChange={typeChangeHandler}
                 >
-                    <option value=''>All</option>
+                    <option value='0'>Any</option>
                     {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
                 </select>
             </div>

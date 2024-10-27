@@ -10,7 +10,7 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types}, ref) => {
     const [description, setDescription, bindDescription, resetDescription] = useInput('');
     const [amount, setAmount, bindAmount, resetAmount] = useInput('');
     const [date, setDate, bindDate, resetDate] = useInput(new Date().toISOString().split('T')[0]);
-    const [typeId, setTypeId, bindTypeId, resetTypeId] = useInput(1);
+    const [typeId, setTypeId, bindTypeId, resetTypeId] = useInput(0);
 
     const resetForm = () => {
         setId(0);
@@ -96,7 +96,8 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types}, ref) => {
                 <div>
                     <label>Type: </label>
                     <select {... bindTypeId}>
-                    {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
+                        <option value='0'>Any</option>
+                        {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
                     </select>
                 </div>
                 <button>{id ? 'Edit' : 'Add'}</button>

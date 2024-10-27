@@ -22,8 +22,7 @@ const init = async () => {
                 amount DECIMAL(11,1) NOT NULL DEFAULT 0.0,
                 date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 type_id INT(11) NOT NULL DEFAULT 0,
-                PRIMARY KEY (id),
-                FOREIGN KEY (type_id) REFERENCES type(id)
+                PRIMARY KEY (id)
             )
         `);
 
@@ -33,15 +32,6 @@ const init = async () => {
                 name VARCHAR(255) NOT NULL DEFAULT '' UNIQUE,
                 PRIMARY KEY (id)
             )
-        `);
-
-        await con.query(`
-            INSERT INTO
-                type (name)
-            VALUES
-                ('others')
-            ON DUPLICATE KEY UPDATE
-                id = id
         `);
     }
     catch (err) {
