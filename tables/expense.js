@@ -4,23 +4,7 @@ class expense {
     constructor(pool) {
         this.pool = pool;
     }
-
-    /**
-     * Check if the input type id is valid
-     * @param {string} typeId type id
-     * @returns {boolean} true if valid, else false
-     */
-    async isValidTypeId(typeId) {
-        const type = db.factory('type');
-        const types = await type.getTypes();
-        // invalid type
-        if(!types.map(t => t.id).includes(typeId)) {
-            return false;
-        }
-
-        return true;
-    }
-
+    
     /**
      * Check if the input date string is in the format 'YYYY-MM-DD'
      * @param {string} dateString date string
@@ -42,8 +26,62 @@ class expense {
     }
 
     /**
+     * Check if the input type id is valid
+     * @param {string} typeId type id
+     * @returns {boolean} true if valid, else false
+     */
+    async isValidTypeId(typeId) {
+        const type = db.factory('type');
+        const types = await type.getTypes();
+        // invalid type
+        if(!types.map(t => t.id).includes(typeId)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate and Process request body for adding or updating records
+     * @param {object} body request body 
+     * @returns {boolean|object} processed object on success, or error object on failure
+     */
+    async validateAndProcessBody(body) {
+        if(typeof(body.description) == 'undefined') {
+            return new Error(`Missing description`);
+        }
+
+        if(typeof(body.amount) == 'undefined') {
+            return new Error(`Missing amount`);
+        }
+        
+        if(typeof(body.date) == 'undefined') {
+            return new Error(`Missing date`);
+        }
+
+        if(!this.isValidDate(body.date)) {
+            return new Error(`Invalid date: ${body.date}`);
+        }
+
+        if(typeof(body.type_id) == 'undefined') {
+            return new Error(`Missing type_id`);
+        }
+
+        if(body.type_id != '0' && !await this.isValidTypeId(body.type_id)) {
+            return new Error(`Invalid type_id: ${body.type_id}`);
+        }
+
+        return {
+            description: body.description,
+            amount: body.amount,
+            date: body.date,
+            type_id: parseInt(body.type_id)
+        }
+    }
+
+    /**
      * Get all entries
-     * @param {object} query query parameters
+     * @param {object} query request query
      * @returns {Array|object} Array of entries on success, or error object on failure
      */
     async getEntries(query) {
@@ -157,25 +195,23 @@ class expense {
 
     /**
      * Add an entry
-     * @param {object} entry expense object
+     * @param {object} body request body
      * @returns {boolean|object} true on success, or error object on failure
      */
-    async addEntry(entry) {
-        if(!this.isValidDate(entry.date)) {
-            return new Error(`Invalid date: ${entry.date}`);
+    async addEntry(body) {
+        const values = await this.validateAndProcessBody(body);
+
+        if(values instanceof Error) {
+            return values;
         }
 
-        if(entry.type_id != '0' && !await this.isValidTypeId(entry.type_id)) {
-            return new Error(`Invalid type_id: ${entry.type_id}`);
-        }
-        entry.type_id = parseInt(entry.type_id);
         try {
             await this.pool.query(`
                 INSERT INTO
                     expense
                 SET
                     ?
-            `, entry);
+            `, values);
     
             return true;
         }
@@ -187,17 +223,20 @@ class expense {
     /**
      * Update an entry
      * @param {number} id id of expense entry to be updated
-     * @param {object} entry expense object
+     * @param {object} body request body
      * @returns {boolean|object} true on success, or error object on failure
      */
-    async updateEntry(id, entry) {
-        if(!this.isValidDate(entry.date)) {
-            return new Error(`Invalid date: ${entry.date}`);
+    async updateEntry(id, body) {        
+        if(Number.isNaN(parseInt(id)) || id < 1) {
+            return new Error(`Invalid id ${id}`);
         }
-        if(entry.type_id != '0' && !await this.isValidTypeId(entry.type_id)) {
-            return new Error(`Invalid type_id: ${entry.type_id}`);
+
+        const values = await this.validateAndProcessBody(body);
+
+        if(values instanceof Error) {
+            return values;
         }
-        entry.type_id = parseInt(entry.type_id);
+
         try {
             await this.pool.query(`
                 UPDATE
@@ -206,7 +245,7 @@ class expense {
                     ?
                 WHERE
                     id = ?
-            `, [entry, id]);
+            `, [values, id]);
     
             return true;
         }
@@ -221,6 +260,10 @@ class expense {
      * @returns {boolean|object} true on success, or error object on failure
      */
     async deleteEntry(id) {
+        if(Number.isNaN(parseInt(id)) || id < 1) {
+            return new Error(`Invalid id ${id}`);
+        }
+
         try {
             await this.pool.query(`
                 DELETE FROM

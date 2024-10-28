@@ -108,7 +108,7 @@ function App() {
     // load types
     const loadTypes = () => {
         const params = {
-            table: 'type'
+            _table: 'type'
         };
 
         fetch("/api?" + new URLSearchParams(params))
@@ -161,7 +161,7 @@ function App() {
         });
 
         const params = {
-            table: 'expense'
+            _table: 'expense'
         };
         if(Object.keys(filtersQuery).length) {
             params.filters = JSON.stringify(filtersQuery);
@@ -185,6 +185,7 @@ function App() {
     // delete entry on delete click
     const deleteEntry = (entry) => {
         const formData = new URLSearchParams();
+        formData.append("_table", "expense");
         formData.append("id", entry.id);
         formData.append("_delete", 1);
         fetch("/api", {

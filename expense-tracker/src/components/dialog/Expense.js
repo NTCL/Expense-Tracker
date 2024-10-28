@@ -34,6 +34,7 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types}, ref) => {
     const submitHandler = e => {
         e.preventDefault();
         const formData = new URLSearchParams();
+        formData.append("_table", "expense");
         formData.append("id", id);
         formData.append("description", description);
         formData.append("amount", amount);

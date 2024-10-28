@@ -6,7 +6,7 @@ const app = express();
 db.init();
 
 app.get("/api", async (req, res) => {
-    const table = req.query.table;
+    const table = req.query._table;
     if(typeof(table) == 'undefined') {
         res.json({
             success: false,
@@ -48,35 +48,52 @@ app.get("/api", async (req, res) => {
 });
 
 app.post("/api", bodyParser.urlencoded(), async (req, res) => {
-    const entry = req.body;
-    const entryId = entry.id;
-    delete entry.id;
-
-    let isDelete = false;
-    if(typeof(entry._delete) != 'undefined' && parseInt(entry._delete)) {
-        isDelete = true;
-        delete entry._delete;
+    const table = req.body._table;
+    if(typeof(table) == 'undefined') {
+        res.json({
+            success: false,
+            error: {
+                message: 'Missing table'
+            }
+        });
     }
 
-    const expense = db.factory('expense');
+    if(typeof(req.body.id) == 'undefined') {
+        return new Error(`Missing id`);
+    }
+
+    const id = parseInt(req.body.id);
+    
+    if(Number.isNaN(id)) {
+        return new Error(`Invalid id ${req.body.id}`);
+    }
+
+    const isDelete = (typeof(req.body._delete) != 'undefined' && parseInt(req.body._delete)) ? true : false;
+
+    let queryRes = false;
+    switch(table) {
+        case 'expense':
+            const expense = db.factory(table);
+            // add an expense
+            if(id == 0) {
+                queryRes = await expense.addEntry(req.body);
+            }
+            // delete an expense
+            else if(isDelete) {
+                queryRes = await expense.deleteEntry(id);
+            }
+            // update an expense
+            else {
+                queryRes = await expense.updateEntry(id, req.body);
+            }
+            break;
+        default:
+            queryRes = new Error(`Invalid table: ${table}`)
+    }
 
     const ret = {
         success : true
     };
-    let queryRes;
-
-    // add an expense
-    if(entryId == 0) {
-        queryRes = await expense.addEntry(entry);
-    }
-    // delete an expense
-    else if(isDelete) {
-        queryRes = await expense.deleteEntry(entryId);
-    }
-    // update an expense
-    else {
-        queryRes = await expense.updateEntry(entryId, entry);
-    }
 
     if(queryRes instanceof Error) {
         ret.success = false;
