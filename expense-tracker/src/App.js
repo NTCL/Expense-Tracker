@@ -4,6 +4,7 @@ import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 import Expense from './components/dialog/Expense';
 import Error from './components/dialog/Error';
+import Type from "./components/dialog/Type";
 
 const initialFilters = {
     _search: '',
@@ -65,6 +66,8 @@ function App() {
     const errorDialogRef = useRef(null);
     // for expense dialog
     const expenseDialogRef = useRef(null);
+    // for type dialog
+    const typeDialogRef = useRef(null);
 
     // for filters
 
@@ -224,6 +227,12 @@ function App() {
                 loadEntries={loadEntries}
                 errorDialogRef={errorDialogRef}
                 types={types}
+                typeDialogRef={typeDialogRef}
+            />
+            <Type
+                ref={typeDialogRef}
+                loadTypes={loadTypes}
+                errorDialogRef={errorDialogRef}
             />
             <h1>Expense Tracker</h1>
             <h3>Filters</h3>

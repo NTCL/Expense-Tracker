@@ -2,7 +2,7 @@ import {forwardRef, useState, useRef, useImperativeHandle} from 'react';
 import useInput from '../../hooks/useInput';
 import Dialog from '../Dialog';
 
-const Expense = forwardRef(({loadEntries, errorDialogRef, types}, ref) => {
+const Expense = forwardRef(({loadEntries, errorDialogRef, types, typeDialogRef}, ref) => {
     const dialogRef = useRef(null);
 
     // form field
@@ -66,7 +66,7 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types}, ref) => {
     }));
 
     return (
-        <Dialog ref={dialogRef}>
+        <Dialog ref={dialogRef} zIndex={1}>
             <form onSubmit={submitHandler}>
                 <div>
                     <h3>{id ? `Edit expense ${id}` : 'Add expense'}</h3>
@@ -101,7 +101,8 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types}, ref) => {
                         {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
                     </select>
                 </div>
-                <button>{id ? 'Edit' : 'Add'}</button>
+                <button type='button' onClick={e => typeDialogRef.current.show({id: 0})}>Add Type</button>
+                <button type='submit'>{id ? 'Edit' : 'Add'}</button>
             </form>
         </Dialog>
     )

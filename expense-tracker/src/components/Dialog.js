@@ -1,6 +1,6 @@
 import {forwardRef, useState, useImperativeHandle} from 'react';
 
-const Dialog = forwardRef((props, ref) => {
+const Dialog = forwardRef(({children, zIndex}, ref) => {
     const [display, setDisplay] = useState('none');
 
     const style = {
@@ -10,7 +10,7 @@ const Dialog = forwardRef((props, ref) => {
         position: 'fixed',
         top: 'calc(50% - 100px)',
         left: 'calc(50% - 150px)',
-        zIndex: '1',
+        zIndex: zIndex,
         backgroundColor: 'white',
         border: 'solid 1px black'
     };
@@ -26,7 +26,7 @@ const Dialog = forwardRef((props, ref) => {
     return (
         <div style={style}>
             <button onClick={e => hide()}>X</button>
-            {props.children}
+            {children}
         </div>
     );
 });

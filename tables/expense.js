@@ -34,7 +34,7 @@ class expense {
         const type = db.factory('type');
         const types = await type.getTypes();
         // invalid type
-        if(!types.map(t => t.id).includes(typeId)) {
+        if(!types.map(t => t.id).includes(parseInt(typeId))) {
             return false;
         }
 

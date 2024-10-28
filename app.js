@@ -87,6 +87,13 @@ app.post("/api", bodyParser.urlencoded(), async (req, res) => {
                 queryRes = await expense.updateEntry(id, req.body);
             }
             break;
+        case 'type':
+            const type = db.factory(table);
+            // add a type
+            if(id == 0) {
+                queryRes = await type.addType(req.body);
+            }
+            break;
         default:
             queryRes = new Error(`Invalid table: ${table}`)
     }
