@@ -5,6 +5,14 @@ import Entry from './components/Entry';
 import Expense from './components/dialog/Expense';
 import Error from './components/dialog/Error';
 import Type from "./components/dialog/Type";
+import {Chart, ArcElement, Tooltip, Legend} from 'chart.js';
+import {Doughnut} from 'react-chartjs-2';
+
+Chart.register(
+    ArcElement,
+    Tooltip,
+    Legend
+);
 
 const initialFilters = {
     _search: '',
@@ -60,8 +68,11 @@ function App() {
     const [orders, ordersDispatch] = useReducer(ordersReducer, initialOrders);
     // for entries
     const [entries, setEntries] = useState([]);
-    // for summary
-    const [sum, setSum] = useState(0);
+    // for total expense
+    const [expenseTotal, setExpenseTotal] = useState(0);
+    // for chart 'expense by type'
+    const [expenseByType, setExpenseByType] = useState([]);
+    const [expenseByTypeDisplay, setExpenseByTypeDisplay] = useState('none');
     // for error dialog
     const errorDialogRef = useRef(null);
     // for expense dialog
@@ -212,9 +223,33 @@ function App() {
 
     // for summary
 
-    // reset sum when entries change
+    // when entries change
     useEffect(() => {
-        setSum(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
+        // set total expense
+        setExpenseTotal(entries.reduce((total, entry) => (parseFloat(total) + parseFloat(entry.amount)).toFixed(1), 0));
+
+        // set data and display for the chart 'expense by type'
+        let expenseByType = {};
+        entries.forEach(entry => {
+            let type = entry.type_id_name === null ? 'Any' : entry.type_id_name;
+            if(typeof(expenseByType[type]) == 'undefined') {
+                expenseByType[type] = 0;
+            }
+            expenseByType[type] += parseFloat(entry.amount);
+        })
+
+        let arr = [];
+        Object.keys(expenseByType).forEach(type => {
+            arr.push({
+                'label': type,
+                'value': expenseByType[type],
+                'color': '#' + Math.floor(Math.random()*16777215).toString(16)
+            })
+        }) 
+
+        setExpenseByTypeDisplay(arr.length == 0 ? 'none' : 'block');
+        setExpenseByType(arr);
+
     }, [entries]);
 
     return (
@@ -293,9 +328,21 @@ function App() {
                 </select>
             </div>
             <h3>Summary</h3>
+            <div style={{display: expenseByTypeDisplay, width: '50%', height: '50%'}}>
+                <Doughnut
+                    data={{
+                        labels: expenseByType.map(data => data.label),
+                        datasets: [{
+                            data: expenseByType.map(data => data.value),
+                            backgroundColor: expenseByType.map(data => data.color),
+                            borderColor: ['black']
+                        }]
+                    }}
+                />
+            </div>
             <div>
                 <label>Total expense: </label>
-                ${sum}
+                ${expenseTotal}
             </div>
             <h3>Entries</h3>
             <button onClick={e => {
