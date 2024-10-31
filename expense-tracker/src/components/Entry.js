@@ -1,22 +1,26 @@
-function Entry({entry, showExpenseDialog, deleteEntry}) {
+import '../styles/entry.scss';
+
+function Entry({entry, isEven, showExpenseDialog, deleteEntry}) {
     return (
-        <div>
-            <div>
+        <div className={`entry ${isEven ? 'entry-even' : ''}`}>
+            <div className='entry-description'>
                 {entry.description}
             </div>
-            <div>
+            <div className='entry-amount'>
                 ${entry.amount}
             </div>
-            <div>
+            <div className='entry-date'>
                 {entry.date}
             </div>
-            <div>
-                {entry.type_id_name}
+            <div className='entry-type'>
+                {entry.type_id_name === null ? 'Any' : entry.type_id_name}
             </div>
-            <button onClick={() => {
-                showExpenseDialog(entry);
-            }}>Edit</button>
-            <button onClick={() => deleteEntry(entry)}>Delete</button>
+            <div className='entry-buttons'>
+                <button onClick={() => {
+                    showExpenseDialog(entry);
+                }}>Edit</button>
+                <button onClick={() => deleteEntry(entry)}>Delete</button>
+            </div>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import "./App.css";
+import './styles/home.scss';
 import {useEffect, useState, useReducer, useRef} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
@@ -247,7 +247,7 @@ function App() {
             })
         }) 
 
-        setExpenseByTypeDisplay(arr.length == 0 ? 'none' : 'block');
+        setExpenseByTypeDisplay(arr.length == 0 ? 'none' : 'flex');
         setExpenseByType(arr);
 
     }, [entries]);
@@ -269,91 +269,105 @@ function App() {
                 loadTypes={loadTypes}
                 errorDialogRef={errorDialogRef}
             />
-            <h1>Expense Tracker</h1>
-            <h3>Filters</h3>
-            <button onClick={e => changeFilters()}>Search</button>
-            <button onClick={e => resetFilters()}>Reset</button>
-            <div>
-                <label>Seach: </label>
-                <input
-                    type='text'
-                    {... bindSearch}
-                />
+            <div className='home-header'>
+                <h1>Expense Tracker</h1>
             </div>
-            <div>
-                <label>Date From: </label>
-                <input
-                    type='date'
-                    {... bindDateFrom}
-                />
+            <hr className='home-separate'/>
+            <div className='home-summary'>
+                <div className='home-summary-chart' style={{display: expenseByTypeDisplay}}>
+                    <h3>Expense By Type</h3>
+                    <Doughnut
+                        data={{
+                            labels: expenseByType.map(data => data.label),
+                            datasets: [{
+                                data: expenseByType.map(data => data.value),
+                                backgroundColor: expenseByType.map(data => data.color),
+                                borderColor: ['black']
+                            }]
+                        }}
+                    />
+                </div>
+                <div className='home-summary-total'>
+                    <label>Total expense: </label>
+                    ${expenseTotal}
+                </div>
             </div>
-            <div>
-                <label>Date To: </label>
-                <input
-                    type='date'
-                    {... bindDateTo}
-                />
+            <hr className='home-separate'/>
+            <div className='home-filter'>
+                <div className='home-filter-buttons'>
+                    <button onClick={e => changeFilters()}>Search</button>
+                    <button onClick={e => resetFilters()}>Reset</button>
+                </div>
+                <div className='home-filter-items'>
+                    <div className='home-filter-item'>
+                        <label>Seach: </label>
+                        <input
+                            type='text'
+                            {... bindSearch}
+                        />
+                    </div>
+                    <div className='home-filter-item'>
+                        <label>Type: </label>
+                        <select 
+                            value={typeFilter}
+                            onChange={typeChangeHandler}
+                        >
+                            <option value='0'>Any</option>
+                            {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
+                        </select>
+                    </div>
+                    <div className='home-filter-item'>
+                        <label>Date From: </label>
+                        <input
+                            type='date'
+                            {... bindDateFrom}
+                        />
+                    </div>
+                    <div className='home-filter-item'>
+                        <label>Date To: </label>
+                        <input
+                            type='date'
+                            {... bindDateTo}
+                        />
+                    </div>
+                </div>
             </div>
-            <div>
-                <label>Type: </label>
-                <select 
-                    value={typeFilter}
-                    onChange={typeChangeHandler}
-                >
-                    <option value='0'>Any</option>
-                    {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
-                </select>
+            <hr className='home-separate'/>
+            <div className='home-order'>
+                <div className='home-order-item'>
+                    <label>Date: </label>
+                    <select
+                        value={orders.date}
+                        onChange={e => ordersDispatch({type: 'changeDate', value: e.target.value})}
+                    >
+                        <option value=''>Unsorted</option>
+                        <option value="ASC">Oldest First</option>
+                        <option value="DESC">Latest First</option>
+                    </select>
+                </div>
+                <div className='home-order-item'>
+                    <label>Amount: </label>
+                    <select
+                        value={orders.amount}
+                        onChange={e => ordersDispatch({type: 'changeAmount', value: e.target.value})}
+                    >
+                        <option value=''>Unsorted</option>
+                        <option value="ASC">Smallest First</option>
+                        <option value="DESC">Largest First</option>
+                    </select>
+                </div>
             </div>
-            <h3>Order</h3>
-            <div>
-                <label>Date: </label>
-                <select
-                    value={orders.date}
-                    onChange={e => ordersDispatch({type: 'changeDate', value: e.target.value})}
-                >
-                    <option value=''>Unsorted</option>
-                    <option value="ASC">Oldest First</option>
-                    <option value="DESC">Latest First</option>
-                </select>
+            <hr className='home-separate'/>
+            <div className='home-expense'>
+                <button className='home-expense-add' onClick={e => expenseDialogRef.current.show({id: 0})}>Add</button>
+                {entries.map((entry, index) => 
+                    <Entry 
+                        key={entry.id} 
+                        entry={entry}
+                        isEven={index % 2 == 0}
+                        showExpenseDialog={expenseDialogRef.current.show}
+                        deleteEntry={deleteEntry}/>)}
             </div>
-            <div>
-                <label>Amount: </label>
-                <select
-                    value={orders.amount}
-                    onChange={e => ordersDispatch({type: 'changeAmount', value: e.target.value})}
-                >
-                    <option value=''>Unsorted</option>
-                    <option value="ASC">Smallest First</option>
-                    <option value="DESC">Largest First</option>
-                </select>
-            </div>
-            <h3>Summary</h3>
-            <div style={{display: expenseByTypeDisplay, width: '50%', height: '50%'}}>
-                <Doughnut
-                    data={{
-                        labels: expenseByType.map(data => data.label),
-                        datasets: [{
-                            data: expenseByType.map(data => data.value),
-                            backgroundColor: expenseByType.map(data => data.color),
-                            borderColor: ['black']
-                        }]
-                    }}
-                />
-            </div>
-            <div>
-                <label>Total expense: </label>
-                ${expenseTotal}
-            </div>
-            <h3>Entries</h3>
-            <button onClick={e => {
-                expenseDialogRef.current.show({id: 0});
-            }}>Add</button>
-            {entries.map(entry => 
-                <Entry 
-                    key={entry.id} 
-                    entry={entry}
-                    showExpenseDialog={expenseDialogRef.current.show}
-                    deleteEntry={deleteEntry}/>)}
         </div>
     );
 }

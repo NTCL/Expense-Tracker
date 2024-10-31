@@ -1,0 +1,37 @@
+.entry {
+    padding: 10px;
+    display: flex;
+    &.entry-even {
+        background-color: lightgray;
+    }
+    .entry-description {
+        margin: 0 10px 0 0;
+        width: 150px
+    }
+    .entry-amount {
+        margin: 0 10px 0 0;
+        width: 75px
+    }
+
+    .entry-date {
+        margin: 0 10px 0 0;
+        width: 100px
+    }
+
+    .entry-type {
+        margin: 0 10px 0 0;
+        width: 150px
+    }
+    .entry-buttons {
+        margin: 0 0 0 auto;
+        button {
+            margin: 0 0 0 10px;
+            padding: 5px 10px;
+            box-shadow: rgba(0, 0, 0, 0.5) 0 0 5px;
+            border: none;
+            border-radius: 10px;
+            background-color: orange;
+            cursor: pointer;
+        }
+    }
+}
