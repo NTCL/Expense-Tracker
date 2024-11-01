@@ -29,7 +29,9 @@ const Dialog = forwardRef(({children, zIndex, title}, ref) => {
                 <h3>{title}</h3>
                 <button className='et-button' onClick={e => hide()}>X</button>
             </div>
-            {children}
+            <div className='et-dialog-body'>
+                {children}
+            </div>
         </div>
     );
 });

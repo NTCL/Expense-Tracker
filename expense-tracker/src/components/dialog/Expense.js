@@ -67,15 +67,15 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types, typeDialogRef},
 
     return (
         <Dialog ref={dialogRef} zIndex={1} title={id ? `Edit expense ${id}` : 'Add expense'}>
-            <form onSubmit={submitHandler}>
-                <div>
+            <form className='expense' onSubmit={submitHandler}>
+                <div className='expense-item'>
                     <label>Description: </label>
                     <input
                         type='text'
                         {... bindDescription}
                     />
                 </div>
-                <div>
+                <div className='expense-item'>
                     <label>Amount: </label>
                     <input
                         type='number'
@@ -84,22 +84,22 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types, typeDialogRef},
                         {... bindAmount}
                     />
                 </div>
-                <div>
+                <div className='expense-item'>
                     <label>Date: </label>
                     <input
                         type='date'
                         {... bindDate}
                     />
                 </div>
-                <div>
+                <div className='expense-item expense-type'>
                     <label>Type: </label>
                     <select {... bindTypeId}>
                         <option value='0'>Any</option>
                         {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
                     </select>
+                    <button className='et-button' type='button' onClick={e => typeDialogRef.current.show({id: 0})}>Add Type</button>
                 </div>
-                <button type='button' onClick={e => typeDialogRef.current.show({id: 0})}>Add Type</button>
-                <button type='submit'>{id ? 'Edit' : 'Add'}</button>
+                <button className='et-button' type='submit'>{id ? 'Edit' : 'Add'}</button>
             </form>
         </Dialog>
     )

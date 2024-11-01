@@ -51,15 +51,15 @@ const Type = forwardRef(({loadTypes, errorDialogRef}, ref) => {
 
     return (
         <Dialog ref={dialogRef} zIndex={2} title={id ? `Edit type ${id}` : 'Add type'}>
-            <form onSubmit={submitHandler}>
-                <div>
+            <form className='type' onSubmit={submitHandler}>
+                <div className='type-item'>
                     <label>Name: </label>
                     <input
                         type='text'
                         {... bindName}
                     />
                 </div>
-                <button type='submit'>{id ? 'Edit' : 'Add'}</button>
+                <button className='et-button' type='submit'>{id ? 'Edit' : 'Add'}</button>
             </form>
         </Dialog>
     )

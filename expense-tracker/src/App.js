@@ -2,6 +2,8 @@ import './styles/global.scss';
 import './styles/home.scss';
 import './styles/entry.scss';
 import './styles/dialog.scss';
+import './styles/expense.scss';
+import './styles/type.scss';
 import {useEffect, useState, useReducer, useRef} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
