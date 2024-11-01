@@ -365,11 +365,20 @@ function App() {
             <hr className='home-separate'/>
             <div className='home-expense'>
                 <button className='home-expense-add et-button' onClick={e => expenseDialogRef.current.show({id: 0})}>Add</button>
+                <Entry
+                    entry={{
+                        description: 'Description',
+                        amount: 'Amount',
+                        date: 'Date',
+                        type_id_name: 'Type'
+                    }}
+                    isHeader={true}
+                />
                 {entries.map((entry, index) => 
                     <Entry 
                         key={entry.id} 
                         entry={entry}
-                        isEven={index % 2 == 0}
+                        isOdd={index % 2 == 1}
                         showExpenseDialog={expenseDialogRef.current.show}
                         deleteEntry={deleteEntry}/>)}
             </div>

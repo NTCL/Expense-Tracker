@@ -1,7 +1,11 @@
 .entry {
     padding: 10px;
     display: flex;
-    &.entry-even {
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 1px;
+    &.entry-header {
+        background-color: orange;
+    }
+    &.entry-odd {
         background-color: lightgray;
     }
     .entry-description {
