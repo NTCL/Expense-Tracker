@@ -1,11 +1,11 @@
 function Entry({entry, isOdd, isHeader, showExpenseDialog, deleteEntry}) {
     return (
-        <div className={`entry ${isHeader? 'entry-header' : ''} ${isOdd ? 'entry-odd' : ''}`}>
+        <div className={`entry ${isHeader ? 'entry-header' : ''} ${isOdd ? 'entry-odd' : ''}`}>
             <div className='entry-description'>
                 {entry.description}
             </div>
             <div className='entry-amount'>
-                ${entry.amount}
+                {`${isHeader ? '' : '$'}${entry.amount}`}
             </div>
             <div className='entry-date'>
                 {entry.date}
