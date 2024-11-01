@@ -1,4 +1,7 @@
+import './styles/global.scss';
 import './styles/home.scss';
+import './styles/entry.scss';
+import './styles/dialog.scss';
 import {useEffect, useState, useReducer, useRef} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
@@ -295,8 +298,8 @@ function App() {
             <hr className='home-separate'/>
             <div className='home-filter'>
                 <div className='home-filter-buttons'>
-                    <button onClick={e => changeFilters()}>Search</button>
-                    <button onClick={e => resetFilters()}>Reset</button>
+                    <button className='et-button' onClick={e => changeFilters()}>Search</button>
+                    <button className='et-button' onClick={e => resetFilters()}>Reset</button>
                 </div>
                 <div className='home-filter-items'>
                     <div className='home-filter-item'>
@@ -359,7 +362,7 @@ function App() {
             </div>
             <hr className='home-separate'/>
             <div className='home-expense'>
-                <button className='home-expense-add' onClick={e => expenseDialogRef.current.show({id: 0})}>Add</button>
+                <button className='home-expense-add et-button' onClick={e => expenseDialogRef.current.show({id: 0})}>Add</button>
                 {entries.map((entry, index) => 
                     <Entry 
                         key={entry.id} 

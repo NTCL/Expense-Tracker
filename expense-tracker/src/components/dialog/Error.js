@@ -16,7 +16,7 @@ const Error = forwardRef(({}, ref) => {
     }));
 
     return (
-        <Dialog ref={dialogRef} zIndex={3}>
+        <Dialog ref={dialogRef} zIndex={3} title={'Error'}>
             <div>{error}</div>
         </Dialog>
     )

@@ -1,18 +1,14 @@
-import {forwardRef, useState, useImperativeHandle} from 'react';
+import {forwardRef, useState, useRef, useEffect, useImperativeHandle} from 'react';
 
-const Dialog = forwardRef(({children, zIndex}, ref) => {
+const Dialog = forwardRef(({children, zIndex, title}, ref) => {
     const [display, setDisplay] = useState('none');
+    const [top, setTop] = useState('50%');
+    const dialogRef = useRef(null);
 
     const style = {
         display: display,
-        width:'300px',
-        height: '200px',
-        position: 'fixed',
-        top: 'calc(50% - 100px)',
-        left: 'calc(50% - 150px)',
-        zIndex: zIndex,
-        backgroundColor: 'white',
-        border: 'solid 1px black'
+        top: top,
+        zIndex: zIndex
     };
 
     const show = () => setDisplay('block');
@@ -23,9 +19,16 @@ const Dialog = forwardRef(({children, zIndex}, ref) => {
         hide
     }));
 
+    useEffect(() => {
+        setTop(`calc(50% - ${dialogRef.current.clientHeight / 2}px)`);
+    }, [display]);
+
     return (
-        <div style={style}>
-            <button onClick={e => hide()}>X</button>
+        <div className='et-dialog' style={style} ref={dialogRef}>
+            <div className='et-dialog-header'>
+                <h3>{title}</h3>
+                <button className='et-button' onClick={e => hide()}>X</button>
+            </div>
             {children}
         </div>
     );

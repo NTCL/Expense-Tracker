@@ -1,5 +1,3 @@
-import '../styles/entry.scss';
-
 function Entry({entry, isEven, showExpenseDialog, deleteEntry}) {
     return (
         <div className={`entry ${isEven ? 'entry-even' : ''}`}>
@@ -16,10 +14,10 @@ function Entry({entry, isEven, showExpenseDialog, deleteEntry}) {
                 {entry.type_id_name === null ? 'Any' : entry.type_id_name}
             </div>
             <div className='entry-buttons'>
-                <button onClick={() => {
+                <button className='et-button' onClick={() => {
                     showExpenseDialog(entry);
                 }}>Edit</button>
-                <button onClick={() => deleteEntry(entry)}>Delete</button>
+                <button className='et-button' onClick={() => deleteEntry(entry)}>Delete</button>
             </div>
         </div>
     );

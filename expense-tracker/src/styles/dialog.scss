@@ -1,0 +1,20 @@
+.et-dialog {
+    padding: 20px;
+    width: 300px;
+    position: fixed;
+    top: calc(50% - 100px);
+    left: calc(50% - 150px);
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 5px;
+    border: none;
+    border-radius: 20px;
+    background-color: white;
+    .et-dialog-header {
+        margin: 0 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        h3 {
+            margin: 0;
+        }
+    }
+}

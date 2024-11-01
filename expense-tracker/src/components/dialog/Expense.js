@@ -66,11 +66,8 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types, typeDialogRef},
     }));
 
     return (
-        <Dialog ref={dialogRef} zIndex={1}>
+        <Dialog ref={dialogRef} zIndex={1} title={id ? `Edit expense ${id}` : 'Add expense'}>
             <form onSubmit={submitHandler}>
-                <div>
-                    <h3>{id ? `Edit expense ${id}` : 'Add expense'}</h3>
-                </div>
                 <div>
                     <label>Description: </label>
                     <input
