@@ -1,9 +1,11 @@
 .entry {
     padding: 10px;
     display: flex;
+    align-items: center;
     box-shadow: rgba(0, 0, 0, 0.5) 0 0 1px;
+
     &.entry-header {
-        background-color: orange;
+        background-color: black;
     }
     &.entry-odd {
         background-color: lightgray;

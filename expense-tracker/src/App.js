@@ -1,4 +1,5 @@
 import './styles/global.scss';
+import './styles/font.scss';
 import './styles/home.scss';
 import './styles/entry.scss';
 import './styles/dialog.scss';
@@ -293,27 +294,29 @@ function App() {
                     />
                 </div>
                 <div className='home-summary-total'>
-                    <label>Total expense: </label>
-                    ${expenseTotal}
+                    <label className='et-p1'>Total expense: </label>
+                    <div className='et-p1'>${expenseTotal}</div>
                 </div>
             </div>
             <hr className='home-separate'/>
             <div className='home-filter'>
                 <div className='home-filter-buttons'>
-                    <button className='et-button' onClick={e => changeFilters()}>Search</button>
-                    <button className='et-button' onClick={e => resetFilters()}>Reset</button>
+                    <button className='et-button et-p3' onClick={e => changeFilters()}>Search</button>
+                    <button className='et-button et-p3' onClick={e => resetFilters()}>Reset</button>
                 </div>
                 <div className='home-filter-items'>
                     <div className='home-filter-item'>
-                        <label>Seach: </label>
+                        <label className='et-p3'>Seach: </label>
                         <input
+                            className='et-p3'
                             type='text'
                             {... bindSearch}
                         />
                     </div>
                     <div className='home-filter-item'>
-                        <label>Type: </label>
+                        <label className='et-p3'>Type: </label>
                         <select 
+                            className='et-p3'
                             value={typeFilter}
                             onChange={typeChangeHandler}
                         >
@@ -322,15 +325,17 @@ function App() {
                         </select>
                     </div>
                     <div className='home-filter-item'>
-                        <label>Date From: </label>
+                        <label className='et-p3'>Date From: </label>
                         <input
+                            className='et-p3'
                             type='date'
                             {... bindDateFrom}
                         />
                     </div>
                     <div className='home-filter-item'>
-                        <label>Date To: </label>
+                        <label className='et-p3'>Date To: </label>
                         <input
+                            className='et-p3'
                             type='date'
                             {... bindDateTo}
                         />
@@ -340,8 +345,9 @@ function App() {
             <hr className='home-separate'/>
             <div className='home-order'>
                 <div className='home-order-item'>
-                    <label>Date: </label>
+                    <label className='et-p3'>Date: </label>
                     <select
+                        className='et-p3'
                         value={orders.date}
                         onChange={e => ordersDispatch({type: 'changeDate', value: e.target.value})}
                     >
@@ -351,8 +357,9 @@ function App() {
                     </select>
                 </div>
                 <div className='home-order-item'>
-                    <label>Amount: </label>
+                    <label className='et-p3'>Amount: </label>
                     <select
+                        className='et-p3'
                         value={orders.amount}
                         onChange={e => ordersDispatch({type: 'changeAmount', value: e.target.value})}
                     >
@@ -364,7 +371,7 @@ function App() {
             </div>
             <hr className='home-separate'/>
             <div className='home-expense'>
-                <button className='home-expense-add et-button' onClick={e => expenseDialogRef.current.show({id: 0})}>Add</button>
+                <button className='home-expense-add et-button et-p3' onClick={e => expenseDialogRef.current.show({id: 0})}>Add</button>
                 <Entry
                     entry={{
                         description: 'Description',

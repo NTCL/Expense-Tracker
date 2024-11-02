@@ -26,6 +26,12 @@
             margin: 0 auto 10px;
         }
     }
+    .home-summary-total {
+        display: flex;
+        label {
+            margin: 0 10px 0 0;
+        }
+    }
 }
 
 .home-filter {

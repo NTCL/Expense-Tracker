@@ -1,0 +1,114 @@
+/* libre-baskerville-regular - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Libre Baskerville';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/libre-baskerville-v14-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* libre-baskerville-700 - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Libre Baskerville';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/libre-baskerville-v14-latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* work-sans-regular - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/work-sans-v19-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* work-sans-regular - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/work-sans-v19-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* work-sans-600 - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/work-sans-v19-latin-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* work-sans-700 - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/work-sans-v19-latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+h1 {
+    font-size: 40px;
+    font-weight: bold;
+    font-family: 'Libre Baskerville';
+    text-align: center;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Libre Baskerville';
+    text-align: center;
+}
+
+.et-p1 {
+    font-size: 20px;
+    font-weight: normal;
+    font-family: 'Work Sans';
+    text-align: left;
+}
+
+.et-p3 {
+    font-size: 16px;
+    font-weight: normal;
+    font-family: 'Work Sans';
+    text-align: left;
+}
+
+.et-p4 {
+    font-size: 14px;
+    font-weight: normal;
+    font-family: 'Work Sans';
+    text-align: left;
+}
+
+.et-button {
+    font-weight: 600;
+    color: white;
+}
+
+.et-dialog {
+    .et-dialog-header {
+        .et-button {
+            font-weight: bold;
+        }
+    }
+}
+
+.home-summary {
+    .home-summary-total {
+        .et-p1 {
+            font-weight: bold;
+        }
+    }
+}
+
+.entry {
+    .et-p1 {
+        font-weight: bold;
+        color: white;
+    }
+    .et-p2 {
+        font-weight: 600;
+    }
+}

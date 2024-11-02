@@ -69,15 +69,17 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types, typeDialogRef},
         <Dialog ref={dialogRef} zIndex={1} title={id ? `Edit expense ${id}` : 'Add expense'}>
             <form className='expense' onSubmit={submitHandler}>
                 <div className='expense-item'>
-                    <label>Description: </label>
+                    <label className='et-p3'>Description: </label>
                     <input
+                        className='et-p3'
                         type='text'
                         {... bindDescription}
                     />
                 </div>
                 <div className='expense-item'>
-                    <label>Amount: </label>
+                    <label className='et-p3'>Amount: </label>
                     <input
+                        className='et-p3'
                         type='number'
                         step='0.1'
                         min='0'
@@ -85,21 +87,22 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types, typeDialogRef},
                     />
                 </div>
                 <div className='expense-item'>
-                    <label>Date: </label>
+                    <label className='et-p3'>Date: </label>
                     <input
+                        className='et-p3'
                         type='date'
                         {... bindDate}
                     />
                 </div>
                 <div className='expense-item expense-type'>
-                    <label>Type: </label>
-                    <select {... bindTypeId}>
+                    <label className='et-p3'>Type: </label>
+                    <select className='et-p3' {... bindTypeId}>
                         <option value='0'>Any</option>
                         {types.map(type => (<option key={type.id} value={type.id}>{type.name}</option>))}
                     </select>
-                    <button className='et-button' type='button' onClick={e => typeDialogRef.current.show({id: 0})}>Add Type</button>
+                    <button className='et-button et-p4' type='button' onClick={e => typeDialogRef.current.show({id: 0})}>Add Type</button>
                 </div>
-                <button className='et-button' type='submit'>{id ? 'Edit' : 'Add'}</button>
+                <button className='et-button et-p3' type='submit'>{id ? 'Edit' : 'Add'}</button>
             </form>
         </Dialog>
     )
