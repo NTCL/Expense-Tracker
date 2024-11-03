@@ -8,8 +8,13 @@ const Dialog = forwardRef(({children, zIndex, title}, ref) => {
     const style = {
         display: display,
         top: top,
-        zIndex: zIndex
+        zIndex: zIndex + 1
     };
+
+    const maskStyle = {
+        display: display,
+        zIndex: zIndex
+    }
 
     const show = () => setDisplay('block');
     const hide = () => setDisplay('none');
@@ -24,15 +29,19 @@ const Dialog = forwardRef(({children, zIndex, title}, ref) => {
     }, [display]);
 
     return (
-        <div className='et-dialog' style={style} ref={dialogRef}>
-            <div className='et-dialog-header'>
-                <h3>{title}</h3>
-                <button className='et-button et-p1' onClick={e => hide()}>X</button>
+        <>
+            <div className='et-dialog' style={style} ref={dialogRef}>
+                <div className='et-dialog-header'>
+                    <h3>{title}</h3>
+                    <button className='et-button et-p1' onClick={e => hide()}>X</button>
+                </div>
+                <div className='et-dialog-body'>
+                    {children}
+                </div>
             </div>
-            <div className='et-dialog-body'>
-                {children}
+            <div className='et-mask' style={maskStyle}>
             </div>
-        </div>
+        </>
     );
 });
 
