@@ -1,4 +1,6 @@
-function Entry({entry, isOdd, isHeader, showExpenseDialog, deleteEntry}) {
+import React from 'react';
+
+function Entry({entry, isOdd, isHeader, expenseDialogRef, deleteEntry}) {
     return (
         <div className={`entry ${isHeader ? 'entry-header' : ''} ${isOdd ? 'entry-odd' : ''}`}>
             <div className='entry-data'>
@@ -17,7 +19,7 @@ function Entry({entry, isOdd, isHeader, showExpenseDialog, deleteEntry}) {
             </div>
             <div className='entry-buttons' style={{visibility: isHeader ? 'hidden' : 'visible' }}>
                 <button className='et-button et-p4' onClick={() => {
-                    showExpenseDialog(entry);
+                    expenseDialogRef.current.show(entry);
                 }}>Edit</button>
                 <button className='et-button et-p4' onClick={() => deleteEntry(entry)}>Delete</button>
             </div>
@@ -25,4 +27,4 @@ function Entry({entry, isOdd, isHeader, showExpenseDialog, deleteEntry}) {
     );
 }
 
-export default Entry;
+export default React.memo(Entry);

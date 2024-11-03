@@ -1,4 +1,4 @@
-import {forwardRef, useState, useRef, useImperativeHandle} from 'react';
+import React, {forwardRef, useState, useRef, useImperativeHandle} from 'react';
 import Dialog from '../Dialog';
 
 const Error = forwardRef(({}, ref) => {
@@ -22,4 +22,4 @@ const Error = forwardRef(({}, ref) => {
     )
 });
 
-export default Error;
+export default React.memo(Error);

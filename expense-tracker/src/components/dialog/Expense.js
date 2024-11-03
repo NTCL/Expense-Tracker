@@ -1,4 +1,4 @@
-import {forwardRef, useState, useRef, useImperativeHandle} from 'react';
+import React, {forwardRef, useState, useRef, useImperativeHandle} from 'react';
 import useInput from '../../hooks/useInput';
 import Dialog from '../Dialog';
 
@@ -108,5 +108,5 @@ const Expense = forwardRef(({loadEntries, errorDialogRef, types, typeDialogRef},
     )
 });
 
-export default Expense;
+export default React.memo(Expense);
 

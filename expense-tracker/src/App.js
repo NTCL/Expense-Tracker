@@ -5,7 +5,7 @@ import './styles/entry.scss';
 import './styles/dialog.scss';
 import './styles/expense.scss';
 import './styles/type.scss';
-import {useEffect, useState, useReducer, useRef} from 'react';
+import {useEffect, useState, useReducer, useRef, useMemo, useCallback} from 'react';
 import useInput from './hooks/useInput';
 import Entry from './components/Entry';
 import Expense from './components/dialog/Expense';
@@ -126,7 +126,7 @@ function App() {
     // for types
 
     // load types
-    const loadTypes = () => {
+    const loadTypes = useCallback(() => {
         const params = {
             _table: 'type'
         };
@@ -140,7 +140,7 @@ function App() {
             }
             errorDialogRef.current.show(json.error.message);
         });
-    };
+    }, []);
 
     // load types in the beginning
     useEffect(() => {
@@ -150,7 +150,7 @@ function App() {
     // for entries
 
     // load entries
-    const loadEntries = () => {
+    const loadEntries = useCallback(() => {
         const filtersQuery = {};
         Object.keys(filters).forEach(name => {
             switch(name) {
@@ -200,10 +200,10 @@ function App() {
             }
             errorDialogRef.current.show(json.error.message);
         });
-    };
+    }, [filters, orders]);
 
     // delete entry on delete click
-    const deleteEntry = (entry) => {
+    const deleteEntry = useCallback((entry) => {
         const formData = new URLSearchParams();
         formData.append("_table", "expense");
         formData.append("id", entry.id);
@@ -220,7 +220,7 @@ function App() {
             }
             errorDialogRef.current.show(json.error.message);
         });
-    }
+    }, []);
 
     // load entries in the beginning and reload on filter or order change
     useEffect(() => {
@@ -378,12 +378,14 @@ function App() {
             <div className='home-expense'>
                 <button className='home-expense-add et-button et-p3' onClick={e => expenseDialogRef.current.show({id: 0})}>Add</button>
                 <Entry
-                    entry={{
-                        description: 'Description',
-                        amount: 'Amount',
-                        date: 'Date',
-                        type_id_name: 'Type'
-                    }}
+                    entry={useMemo(() => {
+                        return {
+                            description: 'Description',
+                            amount: 'Amount',
+                            date: 'Date',
+                            type_id_name: 'Type'
+                        };
+                    }, [])}
                     isHeader={true}
                 />
                 {entries.map((entry, index) => 
@@ -391,8 +393,10 @@ function App() {
                         key={entry.id} 
                         entry={entry}
                         isOdd={index % 2 == 1}
-                        showExpenseDialog={expenseDialogRef.current.show}
-                        deleteEntry={deleteEntry}/>)}
+                        expenseDialogRef={expenseDialogRef}
+                        deleteEntry={deleteEntry}
+                    />
+                )}
             </div>
         </div>
     );

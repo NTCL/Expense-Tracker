@@ -1,32 +1,56 @@
-import {forwardRef, useState, useRef, useEffect, useImperativeHandle} from 'react';
+import React, {forwardRef, useReducer, useRef, useImperativeHandle} from 'react';
+
+const initialStyle = {
+    display: 'none',
+    top: '0',
+    zIndex: 0
+};
+
+const styleReducer = (currentStyle, action) => {
+    switch(action.type) {
+        case "changeStyle":
+            return {
+                ...currentStyle,
+                ...action.value
+            };
+        case "changeDisplay":
+            return {
+                ...currentStyle,
+                display: action.value
+            };
+        default:
+            return currentStyle;
+    }
+}
 
 const Dialog = forwardRef(({children, zIndex, title}, ref) => {
-    const [display, setDisplay] = useState('none');
-    const [top, setTop] = useState('50%');
+    const [style, styleDispatch] = useReducer(styleReducer, initialStyle);
     const dialogRef = useRef(null);
 
-    const style = {
-        display: display,
-        top: top,
-        zIndex: zIndex + 1
-    };
-
     const maskStyle = {
-        display: display,
+        display: style.display,
         zIndex: zIndex
     }
 
-    const show = () => setDisplay('block');
-    const hide = () => setDisplay('none');
+    const show = () => {
+        styleDispatch({
+            type: 'changeStyle',
+            value: {
+                display: 'block',
+                top: `calc(50% - ${dialogRef.current.clientHeight / 2}px)`,
+                zIndex: zIndex + 1
+            }
+        });
+    }
+    const hide = () => styleDispatch({
+        type: 'changeDisplay',
+        value: 'none'
+    });
 
     useImperativeHandle(ref, () => ({
         show,
         hide
     }));
-
-    useEffect(() => {
-        setTop(`calc(50% - ${dialogRef.current.clientHeight / 2}px)`);
-    }, [display]);
 
     return (
         <>
@@ -45,4 +69,4 @@ const Dialog = forwardRef(({children, zIndex, title}, ref) => {
     );
 });
 
-export default Dialog;
+export default React.memo(Dialog);

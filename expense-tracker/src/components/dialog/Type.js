@@ -1,4 +1,4 @@
-import {forwardRef, useState, useRef, useImperativeHandle} from 'react';
+import React, {forwardRef, useState, useRef, useImperativeHandle} from 'react';
 import useInput from '../../hooks/useInput';
 import Dialog from '../Dialog';
 
@@ -66,4 +66,4 @@ const Type = forwardRef(({loadTypes, errorDialogRef}, ref) => {
     )
 });
 
-export default Type;
+export default React.memo(Type);
