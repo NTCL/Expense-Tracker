@@ -279,26 +279,6 @@ function App() {
                 <h1>Expense Tracker</h1>
             </div>
             <hr className='home-separate'/>
-            <div className='home-summary'>
-                <div className='home-summary-chart' style={{display: expenseByTypeDisplay}}>
-                    <h3>Expense By Type</h3>
-                    <Doughnut
-                        data={{
-                            labels: expenseByType.map(data => data.label),
-                            datasets: [{
-                                data: expenseByType.map(data => data.value),
-                                backgroundColor: expenseByType.map(data => data.color),
-                                borderColor: ['black']
-                            }]
-                        }}
-                    />
-                </div>
-                <div className='home-summary-total'>
-                    <label className='et-p1'>Total expense: </label>
-                    <div className='et-p1'>${expenseTotal}</div>
-                </div>
-            </div>
-            <hr className='home-separate'/>
             <div className='home-filter'>
                 <div className='home-filter-buttons'>
                     <button className='et-button et-p3' onClick={e => changeFilters()}>Search</button>
@@ -311,6 +291,11 @@ function App() {
                             className='et-p3'
                             type='text'
                             {... bindSearch}
+                            onKeyDown={e => {
+                                if(e.keyCode == 13) {
+                                    changeFilters();
+                                }
+                            }}
                         />
                     </div>
                     <div className='home-filter-item'>
@@ -367,6 +352,26 @@ function App() {
                         <option value="ASC">Smallest First</option>
                         <option value="DESC">Largest First</option>
                     </select>
+                </div>
+            </div>
+            <hr className='home-separate'/>
+            <div className='home-summary'>
+                <div className='home-summary-chart' style={{display: expenseByTypeDisplay}}>
+                    <h3>Expense By Type</h3>
+                    <Doughnut
+                        data={{
+                            labels: expenseByType.map(data => data.label),
+                            datasets: [{
+                                data: expenseByType.map(data => data.value),
+                                backgroundColor: expenseByType.map(data => data.color),
+                                borderColor: ['black']
+                            }]
+                        }}
+                    />
+                </div>
+                <div className='home-summary-total'>
+                    <label className='et-p1'>Total expense: </label>
+                    <div className='et-p1'>${expenseTotal}</div>
                 </div>
             </div>
             <hr className='home-separate'/>
