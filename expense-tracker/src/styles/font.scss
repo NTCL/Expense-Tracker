@@ -109,3 +109,25 @@ h3 {
         color: white;
     }
 }
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+    }
+    
+    h3 {
+        font-size: 16px;
+    }
+    
+    .et-p1 {
+        font-size: 14px;
+    }
+    
+    .et-p3 {
+        font-size: 12px;
+    }
+    
+    .et-p4 {
+        font-size: 11px;
+    }
+}
