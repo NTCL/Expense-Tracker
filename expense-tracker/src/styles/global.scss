@@ -1,3 +1,17 @@
+.et-header {
+    padding: 40px 0 0;
+    margin: 0 20px 40px;
+    display: flex;
+    h1 {
+        margin: 0 auto;
+    }
+}
+
+.et-separate {
+    margin: 20px 20px;
+    border: 1px solid black;
+}
+
 .et-button {
     padding: 5px 10px;
     box-shadow: rgba(0, 0, 0, 0.5) 0 0 5px;

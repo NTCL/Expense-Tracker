@@ -1,17 +1,3 @@
-.home-separate {
-    margin: 20px 20px;
-    border: 1px solid black;
-}
-
-.home-header {
-    padding: 40px 0 0;
-    margin: 0 20px 40px;
-    display: flex;
-    h1 {
-        margin: 0 auto;
-    }
-}
-
 .home-filter {
     margin: 0 20px;
     .home-filter-buttons {
@@ -48,34 +34,17 @@
     }
 }
 
-.home-summary {
-    margin: 0 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .home-summary-chart {
-        margin: 0 0 20px;
-        width: 50%;
-        display: flex;
-        flex-direction: column;
-        h3 {
-            margin: 0 auto 10px;
-        }
-    }
-    .home-summary-total {
-        display: flex;
-        label {
-            margin: 0 10px 0 0;
-        }
-    }
-}
-
 .home-expense {
     margin: 0 20px;
     display: flex;
     flex-direction: column;
-    .home-expense-add {
-        margin: 0 auto 10px 0;
+    .home-expense-buttons {
+        margin: 0 0 10px;
+        display: flex;
+        justify-content: space-between;
+        button {
+            margin: 0 10px 0 0;
+        }
     }
 }
 
@@ -108,12 +77,6 @@
             label {
                 margin: 0 5px 0 0;
             }
-        }
-    }
-
-    .home-summary {
-        .home-summary-chart {
-            width: 100%;
         }
     }
 }

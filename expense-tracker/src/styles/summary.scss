@@ -1,0 +1,33 @@
+.summary {
+    margin: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .summary-back {
+        margin: 0 0 10px;
+        align-self: flex-start;
+    }
+    .summary-chart {
+        margin: 0 0 20px;
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        h3 {
+            margin: 0 auto 10px;
+        }
+    }
+    .summary-total {
+        display: flex;
+        label {
+            margin: 0 10px 0 0;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .summary {
+        .summary-chart {
+            width: 100%;
+        }
+    }
+}

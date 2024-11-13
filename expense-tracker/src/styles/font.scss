@@ -85,6 +85,10 @@ h3 {
 .et-button {
     font-weight: 600;
     color: white;
+    a {
+        color: white;
+        text-decoration: none;
+    }
 }
 
 .et-dialog {
@@ -95,8 +99,8 @@ h3 {
     }
 }
 
-.home-summary {
-    .home-summary-total {
+.summary {
+    .summary-total {
         .et-p1 {
             font-weight: bold;
         }
