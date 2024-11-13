@@ -3,6 +3,7 @@ This is an expense tracker web app where users can add expense entries with diff
 
 ### Requirement
 mysql v8.0.15
+
 node v20.18.0
 
 ### Installation
