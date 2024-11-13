@@ -13,7 +13,7 @@ Download the zip
 
 Execute the following command under the main folder
 ```sh
-npm install-all
+npm run install-all
 ```
 
 Create an .env file with 'DB_username' and 'DB_password' in the main folder to provide access to the database in localhost. Database and tables will be initialized automatically in the first run.
