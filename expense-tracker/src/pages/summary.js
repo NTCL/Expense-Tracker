@@ -1,5 +1,6 @@
 import '../styles/summary.scss';
-import {useLocation, NavLink as Link} from "react-router-dom";
+import {useEffect} from "react";
+import {useLocation, useNavigate, NavLink as Link} from "react-router-dom";
 import {Chart, ArcElement, Tooltip, Legend} from 'chart.js';
 import {Doughnut} from 'react-chartjs-2';
 import Header from '../components/Header';
@@ -12,7 +13,22 @@ Chart.register(
 
 const Summary = () => {
     const location = useLocation();
-    const {expenseTotal, expenseByType, expenseByTypeDisplay} = location.state;
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // prevent users from accessing summary page directly => redirect to home page
+        if(location.state == null) {
+            navigate('/');
+        }
+    }, []);
+
+    let expenseTotal = 0;
+    let expenseByType = [];
+    let expenseByTypeDisplay = 'none';
+
+    if(location.state != null) {
+        ({expenseTotal, expenseByType, expenseByTypeDisplay} = location.state);
+    }
 
     return (
         <>
@@ -21,7 +37,7 @@ const Summary = () => {
             <div className='summary'>
                 <button className='summary-back et-button et-p3'>
                     <Link to="/">
-                        Back
+                        Home
                     </Link>
                 </button>
                 <div className='summary-chart' style={{display: expenseByTypeDisplay}}>
