@@ -1,3 +1,4 @@
+import '../styles/summary.scss';
 import {useLocation, NavLink as Link} from "react-router-dom";
 import {Chart, ArcElement, Tooltip, Legend} from 'chart.js';
 import {Doughnut} from 'react-chartjs-2';
@@ -11,7 +12,6 @@ Chart.register(
 
 const Summary = () => {
     const location = useLocation();
-
     const {expenseTotal, expenseByType, expenseByTypeDisplay} = location.state;
 
     return (

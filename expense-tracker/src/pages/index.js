@@ -5,7 +5,6 @@ import '../styles/entry.scss';
 import '../styles/dialog.scss';
 import '../styles/expense.scss';
 import '../styles/type.scss';
-import '../styles/summary.scss';
 import {useEffect, useState, useReducer, useRef, useMemo, useCallback} from 'react';
 import useInput from '../hooks/useInput';
 import Header from '../components/Header';
