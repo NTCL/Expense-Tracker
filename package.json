@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "cd ./expense-tracker && npm install && cd .. && npm install";
     "start": "concurrently --kill-others \"nodemon app\" \"npm --prefix ./expense-tracker run start\""
   },
   "repository": {

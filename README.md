@@ -6,13 +6,20 @@ mysql v8.0.15
 
 node v20.18.0
 
+npm v10.8.2
+
 ### Installation
 Download the zip
 
-Create an .env file with 'DB_username' and 'DB_password' in the folder to provide access to the database in localhost. Database and tables will be initialized automatically in the first run.
+Execute the following command under the main folder
+```sh
+npm install
+```
+
+Create an .env file with 'DB_username' and 'DB_password' in the main folder to provide access to the database in localhost. Database and tables will be initialized automatically in the first run.
 
 ### Usage
-Execute the following command under the folder
+Execute the following command under the main folder
 ```sh
 npm start
 ```
