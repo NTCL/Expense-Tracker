@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install-all": "cd ./expense-tracker && npm install && cd .. && npm install",
-    "start": "concurrently --kill-others \"nodemon app\" \"npm --prefix ./expense-tracker run start\""
+    "start": "./wait-for-it db:3306 --timeout=30 --strict -- bash -c 'node setup.js && node app.js'"
   },
   "repository": {
     "type": "git",

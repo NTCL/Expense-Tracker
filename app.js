@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const db = require('./database');
 
 const app = express();
-db.init();
 
 app.get("/api", async (req, res) => {
     const table = req.query._table;
