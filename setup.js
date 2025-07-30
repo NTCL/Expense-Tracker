@@ -4,9 +4,9 @@ require('dotenv').config();
 const init = async () => {
     try {
         const con = await mysql.createConnection({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USERNAME,
-            password: process.env.DB_PASSWORD
+            host: 'db',
+            user: 'root',
+            password: process.env.DB_ROOT_PASSWORD
         });
 
         await con.connect();
