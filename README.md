@@ -16,7 +16,7 @@ git clone https://github.com/NTCL/Expense-Tracker.git
 cd Expense-tracker
 ```
 
-### 2.Create an '.env' file with the following in the root directory
+### 2. Create an '.env' file with the following in the root directory
 ```sh
 DB_ROOT_PASSWORD=db_root_password
 DB_USERNAME=db_user
